@@ -1,0 +1,135 @@
+body {
+  background-color: #0f1c2e;
+  height: 100vh;
+  margin: 0;
+}
+h2 {
+  text-align: center;
+  margin: 0 0 2rem 0;
+  color: #1a1a1a;
+  padding-top: 30px;
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  line-height: 1.4;
+  font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+}
+
+p {
+  padding-top: 10px;
+  text-align: center;
+  font-size: 1rem;
+  color: rgb(0, 0, 0);
+  margin-bottom: 0.5rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0 auto;
+  display: block;
+  width: 100%;
+}
+button a {
+  display: block;
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1rem;
+  background-color: #172e82;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+.reg-button {
+  text-align: center;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.1rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.form-control {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+}
+
+.error {
+  color: #e63946;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+}
+
+.btn {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #0056b3;
+}
+
+.btn:disabled {
+  background-color: #aaa;
+  cursor: not-allowed;
+}
+
+.register {
+  color: #007bff;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.register:hover {
+  text-decoration: underline;
+}
+.login-wrapper {
+  max-width: 420px;
+  margin: 20px auto;
+  padding: 1.5rem 2rem;
+  border-radius: 10px;
+  background-color: #ffffff;
+  background-image: url('/images/logo.png');
+  background-size: cover;
+  background-position-y: -100px;
+  background-position-x: center;
+  background-size: 270px;
+  background-repeat: no-repeat;
+  box-shadow: 0 8px 20px rgba(1, 1, 1, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  position: relative;
+  z-index: 1;
+  background-color: rgba(111, 181, 182, 0.646);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.login-wrapper:hover {
+  transform: scale(1.03);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}

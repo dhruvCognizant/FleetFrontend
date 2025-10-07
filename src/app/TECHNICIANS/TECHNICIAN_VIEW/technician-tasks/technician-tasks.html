@@ -1,0 +1,46 @@
+<div class="technician-tasks-container">
+  <h2>Manage All Assigned Tasks</h2>
+  <div *ngIf="myAssignments.length > 0; else noTasks" class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Assignment ID</th>
+          <th>Service ID</th>
+          <th>Technician Name</th>
+          <th>Status</th>
+          <th>Update Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let assignment of myAssignments">
+          <td>{{ assignment.assignmentId }}</td>
+          <td>{{ assignment.serviceId }}</td>
+          <td>{{ getTechnicianName(assignment.technicianId) }}</td>
+          <td>{{ assignment.status | formatStatus }}</td>
+          <td class="action-cell">
+            <button
+              class="status-btn wip"
+              (click)="updateStatus(assignment.assignmentId, 'Work In Progress')"
+              [disabled]="assignment.status !== 'Assigned'"
+            >
+              Work In Progress
+            </button>
+            <button
+              class="status-btn completed"
+              (click)="updateStatus(assignment.assignmentId, 'Completed')"
+              [disabled]="assignment.status === 'Completed'"
+            >
+              Resolved
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!-- directive that can be condiionally rendered -->
+  <ng-template #noTasks>
+    <div class="no-tasks-message">
+      <p *ngIf="myAssignments.length === 0">There are no tasks assigned at the moment.</p>
+    </div>
+  </ng-template>
+</div>

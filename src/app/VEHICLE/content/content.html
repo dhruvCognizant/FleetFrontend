@@ -1,0 +1,198 @@
+<div class="button-group">
+  <button class="action-btn" data-bs-toggle="modal" data-bs-target=".add-vehicle-modal">
+    <i class="fa-solid fa-car"></i> Add Vehicle
+  </button>
+
+  <button class="action-btn selected"><i class="fa-solid fa-list"></i> List</button>
+
+  <button class="action-btn" data-bs-toggle="modal" data-bs-target=".add-odometer-modal">
+    <i class="fa-solid fa-gauge-high"></i> Add Odometer Reading
+  </button>
+</div>
+
+<!-- Vehicle Registration Modal -->
+<div class="modal fade add-vehicle-modal" tabindex="-1" aria-hidden="true" #vehicleModal>
+  <div class="modal-dialog">
+    <form class="modal-content" #vehicleForm="ngForm" (ngSubmit)="addVehicle(vehicleForm)">
+      <div class="modal-header">
+        <h5 class="modal-title">Vehicle Registration</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Vehicle Model -->
+        <input
+          type="text"
+          name="model"
+          [(ngModel)]="newVehicle.model"
+          class="form-control mb-2"
+          placeholder="Vehicle Model"
+          required
+        />
+        <div
+          *ngIf="vehicleForm.submitted && vehicleForm.controls['model']?.invalid"
+          class="text-danger mb-2"
+        >
+          Model is required.
+        </div>
+
+        <!-- Vehicle Type Dropdown -->
+        <div class="mb-2">
+          <div class="dropdown w-100">
+            <button
+              class="form-control text-start d-flex justify-content-between align-items-center dropdown-toggle"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <span>{{ newVehicle.type || 'Select Vehicle Type' }}</span>
+            </button>
+            <ul class="dropdown-menu w-100">
+              <li *ngFor="let type of vehicleTypes">
+                <a class="dropdown-item" (click)="newVehicle.type = type">
+                  {{ type }}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div *ngIf="vehicleForm.submitted && !newVehicle.type" class="text-danger mb-2">
+          Vehicle type is required.
+        </div>
+
+        <!-- License Year -->
+        <select name="year" [(ngModel)]="newVehicle.year" class="form-control mb-2" required>
+          <option [ngValue]="null" disabled hidden>Select Registration Year</option>
+          <option *ngFor="let year of registrationYears" [ngValue]="year">{{ year }}</option>
+        </select>
+
+        <div
+          *ngIf="vehicleForm.submitted && vehicleForm.controls['year']?.invalid"
+          class="text-danger mb-2"
+        >
+          Enter a valid year.
+        </div>
+
+        <!-- Vehicle Make -->
+        <select name="Make" [(ngModel)]="newVehicle.Make" class="form-control mb-2" required>
+          <option value="" disabled selected>Select Vehicle Make</option>
+          <option *ngFor="let brand of carBrands" [value]="brand">{{ brand }}</option>
+        </select>
+
+        <div
+          *ngIf="vehicleForm.submitted && vehicleForm.controls['Make']?.invalid"
+          class="text-danger mb-2"
+        >
+          Make is required.
+        </div>
+
+        <!-- VIN -->
+        <input
+          type="text"
+          name="vin"
+          [(ngModel)]="newVehicle.vin"
+          class="form-control mb-2"
+          placeholder="Vehicle VIN"
+          required
+        />
+        <div
+          *ngIf="vehicleForm.submitted && vehicleForm.controls['vin']?.invalid"
+          class="text-danger mb-2"
+        >
+          VIN is required.
+        </div>
+
+        <!-- Last Service Date -->
+        <div class="form-floating mb-2">
+          <input
+            type="date"
+            [max]="today"
+            name="lastService"
+            id="lastService"
+            [(ngModel)]="newVehicle.lastService"
+            class="form-control"
+            required
+          />
+          <label for="lastService">Select Last Service Date</label>
+        </div>
+
+        <div
+          *ngIf="vehicleForm.submitted && vehicleForm.controls['lastService']?.invalid"
+          class="text-danger mb-2"
+        >
+          Last service date is required.
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="submit" [disabled]="vehicleForm.invalid" class="btn btn-primary">
+          Save Vehicle
+        </button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Odometer Reading Modal -->
+<div class="modal fade add-odometer-modal" tabindex="-1" aria-hidden="true" #odometerModal>
+  <div class="modal-dialog">
+    <form class="modal-content" #odometerForm="ngForm" (ngSubmit)="submitOdometer(odometerForm)">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Odometer Reading</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Vehicle Dropdown -->
+        <div class="mb-2">
+          <div class="dropdown w-100">
+            <button
+              class="form-control text-start d-flex justify-content-between align-items-center dropdown-toggle"
+              type="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            >
+              <span>{{ odometer.vehicleId || 'Select Vehicle' }}</span>
+            </button>
+            <ul class="dropdown-menu w-100">
+              <li *ngFor="let v of newvehicles">
+                <a class="dropdown-item" (click)="selectVehicle(v.vehicleId)">
+                  {{ v.Make }} {{ v.model }} ({{ v.vehicleId }})
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div *ngIf="odometerForm.submitted && !odometer.vehicleId" class="text-danger mt-1">
+            Vehicle selection is required.
+          </div>
+        </div>
+
+        <!-- Mileage Input -->
+        <input
+          type="number"
+          name="mileage"
+          [(ngModel)]="odometer.mileage"
+          class="form-control mb-2"
+          placeholder="Odometer Reading (km)"
+          required
+          min="0"
+        />
+        <div
+          *ngIf="odometerForm.submitted && odometerForm.controls['mileage']?.invalid"
+          class="text-danger mb-2"
+        >
+          Mileage is required and must be positive.
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success">Save Reading</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Vehicle List Display -->
+<app-vehicle-list [vehicles]="newvehicles" [odometerReadings]="odometerReadings"></app-vehicle-list>

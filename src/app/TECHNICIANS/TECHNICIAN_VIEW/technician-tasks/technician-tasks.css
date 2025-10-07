@@ -1,0 +1,117 @@
+.technician-tasks-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+h2 {
+  text-align: center;
+  color: #2c3e50;
+  margin-bottom: 2rem;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th,
+td {
+  border-bottom: 1px solid #ddd;
+  padding: 1rem;
+  text-align: left;
+  vertical-align: middle;
+}
+th {
+  background-color: #2980b9;
+  color: white;
+}
+tbody tr:nth-child(even) {
+  background-color: #f8f9f9;
+}
+tbody tr:hover {
+  background-color: #ecf0f1;
+}
+.status-select {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  width: 100%;
+  min-width: 150px;
+  box-sizing: border-box;
+}
+.status-select:disabled {
+  background-color: #e9ecef;
+  cursor: not-allowed;
+  color: #777;
+}
+.status-btn {
+  padding: 5px;
+  margin-right: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+.status-btn.wip {
+  background-color: #f39c12;
+}
+.status-btn.wip:hover:not(:disabled) {
+  background-color: #e67e22;
+  transform: scale(1.05);
+}
+
+.status-btn.completed {
+  background-color: #27ae60;
+}
+
+.status-btn.completed:hover:not(:disabled) {
+  background-color: #1e8449;
+  transform: scale(1.05);
+}
+
+.status-btn:disabled {
+  background-color: #bdc3c7;
+  color: #ecf0f1;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+.status-badge {
+  padding: 0.3rem 0.7rem;
+  border-radius: 12px;
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.status-badge.status-assigned {
+  background-color: #3498db;
+}
+.status-badge.status-wip {
+  background-color: #f1c40f;
+  color: #333;
+}
+.status-badge.status-completed {
+  background-color: #2ecc71;
+}
+.no-tasks-message {
+  text-align: center;
+  font-size: 1.1em;
+  color: #7f8c8d;
+  padding: 2rem;
+  background-color: #f8f9f9;
+  border-radius: 5px;
+}
+.action-cell {
+  white-space: nowrap; 
+  display: flex;       
+  gap: 0.5rem;        
+  flex-wrap: nowrap;  
+  align-items: center;
+}

@@ -1,0 +1,67 @@
+<div>
+  <form #regForm="ngForm" (ngSubmit)="onSubmit(regForm)">
+    <h1>Register Here</h1>
+    <label>First Name:</label><br />
+    <input
+      type="text"
+      name="fname"
+      [(ngModel)]="formData.fname"
+      required
+      pattern="^[A-Za-z]+$"
+      #fname="ngModel"
+    />
+    <div *ngIf="fname.invalid && fname.touched" class="error">
+      First name is required and must contain only letters.
+    </div>
+    <br />
+
+    <label>Last Name:</label><br />
+    <input
+      type="text"
+      name="lname"
+      [(ngModel)]="formData.lname"
+      required
+      pattern="^[A-Za-z]+$"
+      #lname="ngModel"
+    />
+    <div *ngIf="lname.invalid && lname.touched" class="error">
+      Last name is required and must contain only letters.
+    </div>
+    <br />
+
+    <label>Email:</label><br />
+    <input type="email" name="email" [(ngModel)]="formData.email" required #email="ngModel" />
+    <div *ngIf="email.invalid && email.touched" class="error">Valid email is required.</div>
+    <br />
+
+    <label>Password:</label><br />
+    <input
+      type="password"
+      name="password"
+      [(ngModel)]="formData.password"
+      required
+      pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$"
+      #password="ngModel"
+    />
+    <div *ngIf="password.invalid && password.touched" class="error">
+      Password must be at least 8 characters and include uppercase, lowercase, number, and special
+      character.
+    </div>
+    <br />
+
+    <label>Confirm Password:</label><br />
+    <input
+      type="password"
+      name="cpassword"
+      [(ngModel)]="formData.cpassword"
+      required
+      #cpassword="ngModel"
+    />
+    <div *ngIf="formData.password !== formData.cpassword && cpassword.touched" class="error">
+      Passwords do not match.
+    </div>
+    <br />
+
+    <input type="submit" value="Submit" [disabled]="regForm.invalid" />
+  </form>
+</div>

@@ -1,0 +1,7 @@
+<div class="dashboard">
+  <div class="card" *ngFor="let stat of stats">
+    <div class="icon" [ngClass]="stat.color"></div>
+    <h3>{{ stat.title }}</h3>
+    <p>{{ stat.count }}</p>
+  </div>
+</div>

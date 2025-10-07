@@ -1,0 +1,6 @@
+<app-landing-header *ngIf="isLandingPage"></app-landing-header>
+<app-header *ngIf="!isLandingPage && !isLoginPage"></app-header>
+<main>
+  <router-outlet></router-outlet>
+</main>
+<app-footer *ngIf="!isLoginPage"></app-footer>

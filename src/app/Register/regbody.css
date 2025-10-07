@@ -1,0 +1,106 @@
+.url-bar {
+  background-color: #e0f2f1;
+  padding: 0.6rem 1rem;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.95rem;
+  color: #333;
+  border-bottom: 1px solid #ccc;
+  text-align: left;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to right, #0f1c2e, #1a2a3f);
+  font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
+  color: #1a1a1a;
+}
+
+form {
+  max-width: 480px;
+  margin: 60px auto;
+  padding: 3rem 2.5rem;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+form:hover {
+  transform: scale(1.015);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.2);
+}
+
+form h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #007bff;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-weight: 600;
+  color: #444;
+}
+
+input[type='text'],
+input[type='email'],
+input[type='password'] {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.2rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
+  outline: none;
+}
+
+input[type='submit'] {
+  width: 100%;
+  padding: 0.85rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+input[type='submit']:hover {
+  background-color: #0056b3;
+  transform: scale(1.01);
+}
+
+.error {
+  color: red;
+  font-size: 0.85em;
+  margin-top: -1rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+@media (max-width: 600px) {
+  form {
+    margin: 2rem 1rem;
+    padding: 2rem;
+  }
+
+  form h1 {
+    font-size: 1.6rem;
+  }
+
+  input[type='submit'] {
+    font-size: 0.95rem;
+  }
+}

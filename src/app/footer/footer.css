@@ -1,0 +1,58 @@
+.fleetcare-footer {
+  background-color: #7ba8a8;
+  color: #212529;
+  font-family: 'Inter', sans-serif;
+  padding: 40px 30px;
+  margin: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.footer-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 30px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #6a9a9a;
+}
+.footer-section {
+  flex: 1 1 220px;
+}
+.footer-section h3 {
+  color: #000000;
+  font-weight: 600;
+  margin-bottom: 15px;
+}
+.footer-section p {
+  color: #343a40;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+.footer-section a {
+  color: #343a40;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+.footer-section a:hover {
+  color: #000000;
+}
+.social-icons a {
+  font-size: 20px;
+  margin-right: 15px;
+}
+.policy-links {
+  list-style: none;
+  padding: 0;
+}
+.policy-links li {
+  margin-bottom: 8px;
+}
+.footer-bottom {
+  text-align: center;
+  margin-top: 20px;
+}
+.footer-bottom p {
+  font-size: 13px;
+  color: #495057;
+}

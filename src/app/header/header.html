@@ -1,0 +1,31 @@
+<div class="app-container">
+  <div class="nav-container">
+    <nav class="main-nav">
+      <div class="header">
+        <img src="images/logo.png" alt="FleetCare Logo" class="logo" />
+      </div>
+      <div class="nav-links">
+        <!-- Admin links -->
+        <a *ngIf="role === 'admin'" routerLink="/login/admin/dashboard">Dashboard</a>
+        <a *ngIf="role === 'admin'" routerLink="/login/admin/Content">Vehicles</a>
+        <a *ngIf="role === 'admin'" routerLink="/login/admin/Schedule">Schedule</a>
+        <a *ngIf="role === 'admin'" routerLink="/login/admin/Technicians">Technicians</a>
+        <a *ngIf="role === 'admin'" routerLink="/login/admin/History">History</a>
+        <!-- Technician links -->
+        <a *ngIf="role === 'technician'" routerLink="/login/technician/">Dashboard</a>
+        <a *ngIf="role === 'technician'" routerLink="/login/technician/Technician"
+          >Technician Tasks</a
+        >
+        <!-- Admin links -->
+
+        <a *ngIf="role === 'user'" routerLink="/login/user/">Dashboard</a>
+        <a *ngIf="role === 'user'" routerLink="/login/user/Technician">Technician Tasks</a>
+      </div>
+      <div class="nav-actions">
+        <a routerLink="/login" class="login-button btn" [ngClass]="{ 'btn-danger': isLoggedIn }">
+          {{ isLoggedIn ? 'Logout' : 'Login' }}
+        </a>
+      </div>
+    </nav>
+  </div>
+</div>

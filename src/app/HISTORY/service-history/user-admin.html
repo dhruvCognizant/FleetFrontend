@@ -1,0 +1,105 @@
+<section class="admin-panel">
+  <!-- Header -->
+  <div class="header-row">
+    <h1>Service History Management</h1>
+  </div>
+
+  <!-- Admin Input Form -->
+  <form #adminForm="ngForm" (ngSubmit)="addRecord(adminForm)" class="admin-form">
+    <div class="form-group">
+      <select name="vehicleId" [(ngModel)]="newVehicleId" (change)="onVehicleSelect()" required>
+        <option value="">--Select Vehicle ID--</option>
+        <option *ngFor="let id of vehicleIds" [value]="id">{{ id }}</option>
+      </select>
+
+      <input type="date" name="date" [(ngModel)]="newDate" required />
+
+      <select name="paymentStatus" [(ngModel)]="newPaymentStatus" required>
+        <option value="">--Select Payment Status--</option>
+        <option value="Paid">Paid</option>
+        <option value="Unpaid">Unpaid</option>
+      </select>
+
+      <input
+        type="text"
+        name="technician"
+        [(ngModel)]="newTechnician"
+        placeholder="Technician Name"
+        disabled
+        required
+      />
+    </div>
+
+    <div class="form-group">
+      <select name="status" [(ngModel)]="newStatus" required>
+        <option value="">--Select Status--</option>
+        <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+      </select>
+
+      <select disabled name="type" [(ngModel)]="newType" (change)="onTypeChange()" required>
+        <option value="">--Select Service Type--</option>
+        <option *ngFor="let type of typeOptions" [value]="type">{{ type }}</option>
+      </select>
+
+      <input type="number" name="cost" [(ngModel)]="newCost" placeholder="Cost (₹)" readonly />
+
+      <button type="submit">Add Record</button>
+    </div>
+  </form>
+
+  <!-- Records Table -->
+  <div class="record-table">
+    <h2>Service Records</h2>
+
+    <div class="search-filter">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        placeholder="Search by Technician"
+        class="search-box"
+      />
+
+      <select [(ngModel)]="filterStatus" class="filter-box">
+        <option value="">--Filter by Status--</option>
+        <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
+      </select>
+
+      <div class="sort-control">
+        <select [(ngModel)]="sortOrder" (change)="sortRecords(sortOrder)" class="sort-box">
+          <option value="">--Sort by Date--</option>
+          <option value="asc">Sort by Date Ascending</option>
+          <option value="desc">Sort by Date Descending</option>
+        </select>
+      </div>
+    </div>
+
+    <table *ngIf="filteredRecords.length > 0; else noRecords">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Vehicle ID</th>
+          <th>Status</th>
+          <th>Service Type</th>
+          <th>Cost (₹)</th>
+          <th>Technician Name</th>
+          <th>Payment Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of filteredRecords">
+          <td>{{ r.date | date : 'yyyy-MM-dd' }}</td>
+          <td>{{ r.vehicleId }}</td>
+          <td>{{ r.status }}</td>
+          <td>{{ r.type }}</td>
+          <td>{{ r.cost }}</td>
+          <td>{{ r.technician }}</td>
+          <td>{{ r.paymentStatus }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ng-template #noRecords>
+      <p style="padding: 1rem; color: #888">No records found matching your search.</p>
+    </ng-template>
+  </div>
+</section>

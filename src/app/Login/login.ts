@@ -30,8 +30,6 @@ export class LoginComponent {
           this.router.navigate(['/login/admin']);
         } else if (role === 'technician') {
           this.router.navigate(['/login/technician']);
-        } else {
-          this.router.navigate(['/login/user']);
         }
       } else {
         alert('Invalid credentials. Please try again.');

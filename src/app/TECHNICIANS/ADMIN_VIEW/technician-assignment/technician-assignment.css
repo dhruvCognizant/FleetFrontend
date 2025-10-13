@@ -156,3 +156,89 @@ tbody tr:hover {
   background-color: #bdc3c7;
   cursor: not-allowed;
 }
+@media (max-width: 800px) {
+  .technician-container {
+    padding: 1.5rem;
+    margin: 1.5rem auto;
+  }
+  .action-buttons {
+    gap: 0.8rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .technician-container {
+    padding: 1rem;
+    margin: 1rem;
+  }
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .action-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .action-buttons button {
+    width: 100%;
+    padding: 0.7rem;
+    font-size: 0.95rem;
+  }
+  .form-container,
+  .table-container {
+    padding: 1rem;
+  }
+
+  .table-container {
+    overflow-x: hidden;
+  }
+
+  table {
+    border: 0;
+  }
+
+  table thead {
+    display: none;
+  }
+
+  table tr {
+    display: block;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+
+  table td {
+    display: block;
+    text-align: right;
+    font-size: 0.9rem;
+    padding-left: 50%;
+    position: relative;
+  }
+
+  table td:last-child {
+    border-bottom: 0;
+  }
+
+  table td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 10px;
+    width: 45%;
+    padding-right: 10px;
+    text-align: left;
+    font-weight: bold;
+    color: #34495e;
+  }
+
+  tbody tr[ng-reflect-ng-if='true'] td,
+  tbody tr[ng-reflect-ng-if='assignments.le'] td {
+    text-align: center;
+    padding-left: 0.6rem;
+  }
+  tbody tr[ng-reflect-ng-if='true'] td::before,
+  tbody tr[ng-reflect-ng-if='assignments.le'] td::before {
+    display: none;
+  }
+}

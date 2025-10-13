@@ -39,8 +39,8 @@ export class Regbody {
       this.commonService.addTechnician(credential);
       alert('Welcome Technician');
     } else {
-      this.commonService.addUser(credential);
-      alert('Welcome User');
+      alert('Invalid email domain for registration. Please use @fleet.com.');
+      return;
     }
     this.router.navigate(['/login']);
   }

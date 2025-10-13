@@ -4,7 +4,6 @@ import { ServiceSchedulingComponent } from './SCHEDULING/maintenance-scheduling/
 import { TechnicianAssignmentComponent } from './TECHNICIANS/ADMIN_VIEW/technician-assignment/technician-assignment';
 import { UserAdmin } from './HISTORY/service-history/user-admin';
 import { TechnicianTasksComponent } from './TECHNICIANS/TECHNICIAN_VIEW/technician-tasks/technician-tasks';
-import { UserAssignmentsComponent } from './TECHNICIANS/USER_VIEW/user-assignments/user-assignments';
 import { Content } from './VEHICLE/content/content';
 import { Routes } from '@angular/router';
 import { Dashboard } from './DASHBOARD/dashboard';
@@ -29,13 +28,6 @@ export const routes: Routes = [
     path: 'login/technician',
     children: [
       { path: 'Technician', component: TechnicianTasksComponent },
-      { path: '', component: Dashboard, pathMatch: 'full' },
-    ],
-  },
-  {
-    path: 'login/user',
-    children: [
-      { path: 'Technician', component: UserAssignmentsComponent },
       { path: '', component: Dashboard, pathMatch: 'full' },
     ],
   },

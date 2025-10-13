@@ -16,10 +16,6 @@
         <a *ngIf="role === 'technician'" routerLink="/login/technician/Technician"
           >Technician Tasks</a
         >
-        <!-- Admin links -->
-
-        <a *ngIf="role === 'user'" routerLink="/login/user/">Dashboard</a>
-        <a *ngIf="role === 'user'" routerLink="/login/user/Technician">Technician Tasks</a>
       </div>
       <div class="nav-actions">
         <a routerLink="/login" class="login-button btn" [ngClass]="{ 'btn-danger': isLoggedIn }">

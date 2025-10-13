@@ -56,3 +56,44 @@
   font-size: 13px;
   color: #495057;
 }
+
+@media (max-width: 480px) {
+  .footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+    padding-bottom: 15px;
+  }
+
+  .footer-section {
+    flex: 1 1 48%;
+    margin-bottom: 10px;
+  }
+
+  .fleetcare-footer {
+    padding: 20px 15px;
+    margin: 10px;
+  }
+
+  .footer-section h3 {
+    font-size: 15px;
+    margin-bottom: 8px;
+  }
+
+  .footer-section p,
+  .footer-section a {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+
+  .social-icons a {
+    font-size: 18px;
+    margin-right: 10px;
+  }
+
+  .footer-bottom p {
+    font-size: 11px;
+    margin-top: 10px;
+  }
+}

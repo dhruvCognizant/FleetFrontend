@@ -11,7 +11,7 @@ import { Component } from '@angular/core';
   styleUrl: './header.css',
 })
 export class HeaderComponent {
-  public role: 'admin' | 'technician' | 'user' | null = null;
+  public role: 'admin' | 'technician' | null = null;
 
   constructor(private commonService: CommonService) {}
 

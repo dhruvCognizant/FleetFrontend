@@ -16,17 +16,11 @@ enum ServiceCode {
 export class CommonService {
   private adminUsername = 'admin@admin.com';
   private adminPassword = 'admin123';
-  private users: Credential[] = [
-    { email: 'user@gmail.com', password: 'user123' },
-    { email: 'harshith@gmail.com', password: 'harshith123' },
-    { email: 'kasi@gmail.com', password: 'kasi123' },
-    { email: 'krishna@gmail.com', password: 'krishna123' },
-  ];
   private technicians: Credential[] = [
     { email: 'tech@fleet.com', password: 'tech123' },
     { email: 'john@fleet.com', password: 'john123' },
   ];
-  private role: 'admin' | 'technician' | 'user' | null = null;
+  private role: 'admin' | 'technician' | null = null;
   private loggedInEmail: string | null = null;
   vehicleListChanged = false;
   technicianListChanged = false;
@@ -59,14 +53,10 @@ export class CommonService {
       this.role = 'technician';
       this.loggedInEmail = email;
       return true;
-    } else if (this.users.find((u) => u.email === email && u.password === password)) {
-      this.role = 'user';
-      this.loggedInEmail = email;
-      return true;
     }
     return false;
   }
-  getRole(): 'admin' | 'technician' | 'user' | null {
+  getRole(): 'admin' | 'technician' | null {
     return this.role;
   }
   getEmail(): string | null {
@@ -130,12 +120,6 @@ export class CommonService {
   }
   getCompletedRecords(): any[] {
     return this.completedRecords;
-  }
-  addUser(credential: Credential): void {
-    if (!this.users.some((user) => user.email === credential.email)) {
-      this.users.push(credential);
-      console.log(this.technicians);
-    }
   }
   addTechnician(credential: Credential): void {
     this.technicians.push(credential);

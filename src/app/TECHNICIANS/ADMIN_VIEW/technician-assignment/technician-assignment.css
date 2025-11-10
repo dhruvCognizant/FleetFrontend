@@ -165,7 +165,6 @@ tbody tr:hover {
     gap: 0.8rem;
   }
 }
-
 @media (max-width: 600px) {
   .technician-container {
     padding: 1rem;

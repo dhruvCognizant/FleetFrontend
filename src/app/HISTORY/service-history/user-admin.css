@@ -1,53 +1,78 @@
 .admin-panel {
   font-family: 'Segoe UI', sans-serif;
+
   padding: 2rem;
+
   background-color: #f0f4f8;
+
   color: #333;
+
   max-width: 1200px;
+
   margin: auto;
 }
 
+/* Header */
+
 .header-row {
   display: flex;
+
   justify-content: space-between;
+
   align-items: center;
+
   gap: 2rem;
+
   margin-bottom: 2rem;
+
   padding: 1.5rem 2rem;
+
   border-radius: 12px;
+
   background: linear-gradient(to right, #4a90e2, #50e3c2);
+
   color: white;
+
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
   flex-wrap: wrap;
+
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .header-row:hover {
   transform: translateY(-2px);
+
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
 
 .header-row h1,
 .header-row h2 {
   margin: 0;
+
   font-weight: 600;
+
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .header-row h1 {
   font-size: 2.4rem;
+
   letter-spacing: 1px;
 }
 
 .header-row h2 {
   font-size: 1.6rem;
+
   font-weight: 500;
+
   opacity: 0.95;
 }
 
 @media (max-width: 768px) {
   .header-row {
     flex-direction: column;
+
     text-align: center;
   }
 
@@ -60,105 +85,610 @@
   }
 }
 
+/* Form */
+
 .admin-form {
   background-color: #ffffff;
+
   padding: 2rem;
+
   border-radius: 10px;
+
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
   margin-bottom: 2.5rem;
 }
 
 .admin-form .form-group {
   display: flex;
+
   flex-wrap: wrap;
+
   gap: 1.5rem;
+
   margin-bottom: 1.5rem;
 }
 
 .admin-form input,
 .admin-form select {
   padding: 0.75rem 1rem;
+
   font-size: 1rem;
+
   border-radius: 8px;
+
   border: 1px solid #ccc;
+
   min-width: 220px;
+
   flex: 1;
+
   background-color: #f9fbfc;
+
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .admin-form input:focus,
 .admin-form select:focus {
   border-color: #0078d4;
+
   box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.2);
+
   outline: none;
+}
+
+.admin-form input:hover,
+.admin-form select:hover {
+  border-color: #0078d4;
+
+  box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.15);
 }
 
 .admin-form button {
   padding: 0.75rem 1.5rem;
+
   font-size: 1rem;
+
   background-color: #0078d4;
+
   color: white;
+
   border: none;
+
   border-radius: 8px;
+
   cursor: pointer;
+
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .admin-form button:hover {
   background-color: #005fa3;
+
   transform: translateY(-1px);
 }
 
-.service-details {
-  border: 1px solid #ccc;
-  padding: 1.5rem;
-  border-radius: 10px;
-  margin-bottom: 2rem;
-  background-color: #f8fafc;
+.admin-form button:active {
+  transform: scale(0.98);
+
+  background-color: #004c87;
 }
 
-.service-details legend {
-  font-weight: bold;
-  color: #0078d4;
-  font-size: 1.1rem;
-  margin-bottom: 0.75rem;
+/* Modal Backdrop */
+
+.modal-backdrop {
+  position: fixed;
+
+  top: 0;
+
+  left: 0;
+
+  width: 100%;
+
+  height: 100%;
+
+  backdrop-filter: blur(6px);
+
+  background: rgba(0, 0, 0, 0.4);
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  z-index: 999;
 }
+
+/* Modal Box */
+
+.modal {
+  background: white;
+
+  padding: 2rem;
+
+  border-radius: 12px;
+
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+
+  max-width: 420px;
+
+  width: 90%;
+
+  text-align: center;
+
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal h2 {
+  font-size: 1.6rem;
+
+  margin-bottom: 1rem;
+
+  background: linear-gradient(to right, #0078d4, #00c6ff);
+
+  -webkit-background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+}
+
+/* Payment Options */
+
+.payment-options {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 1rem;
+
+  margin-top: 1rem;
+}
+
+.payment-options button {
+  padding: 0.75rem 1.5rem;
+
+  font-size: 1rem;
+
+  border: none;
+
+  border-radius: 8px;
+
+  background-color: #0078d4;
+
+  color: white;
+
+  cursor: pointer;
+
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.payment-options button:hover {
+  background-color: #005fa3;
+
+  transform: translateY(-2px);
+}
+
+/* Close Button */
+
+.close-btn {
+  margin-top: 1.5rem;
+
+  padding: 0.5rem 1rem;
+
+  background-color: #ccc;
+
+  color: #333;
+
+  border: none;
+
+  border-radius: 6px;
+
+  cursor: pointer;
+
+  transition: background-color 0.3s ease;
+}
+
+.close-btn:hover {
+  background-color: #bbb;
+}
+
+/* UPI Input */
+
+.upi-input {
+  width: 100%;
+
+  padding: 0.75rem 1rem;
+
+  font-size: 1rem;
+
+  border-radius: 8px;
+
+  border: 1px solid #ccc;
+
+  margin-bottom: 1rem;
+
+  background-color: #f9fbfc;
+}
+
+.upi-input:focus {
+  border-color: #0078d4;
+
+  box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.2);
+
+  outline: none;
+}
+
+/* Cash Modal Inputs */
+
+.modal select {
+  width: 100%;
+
+  padding: 0.75rem 1rem;
+
+  font-size: 1rem;
+
+  border-radius: 8px;
+
+  border: 1px solid #ccc;
+
+  margin: 1rem 0;
+
+  background-color: #f9fbfc;
+}
+
+.modal label {
+  display: flex;
+
+  align-items: center;
+
+  gap: 0.5rem;
+
+  margin-top: 1rem;
+
+  font-size: 1rem;
+}
+
+/* Records Table */
 
 .record-table {
   background-color: white;
+
   padding: 2rem;
+
   border-radius: 10px;
+
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .record-table h2 {
   margin-bottom: 1.5rem;
+
   color: #333;
+
   font-size: 1.5rem;
 }
 
 .record-table table {
   width: 100%;
+
   border-collapse: collapse;
 }
 
 .record-table th,
 .record-table td {
   border: 1px solid #ddd;
+
   padding: 1rem;
+
   text-align: left;
+
   font-size: 0.95rem;
 }
 
 .record-table th {
   background-color: #e6f0ff;
+
   font-weight: 600;
 }
 
 .record-table tr:nth-child(even) {
   background-color: #f9f9f9;
 }
+
+.record-table tbody tr:hover {
+  background-color: #eaf4ff;
+}
+
+/* Search & Filter */
+
+.search-filter {
+  display: flex;
+
+  flex-wrap: wrap;
+
+  gap: 1rem;
+
+  margin-bottom: 2rem;
+
+  justify-content: flex-start;
+
+  padding: 1rem 0;
+}
+
+.search-box,
+.filter-box,
+.sort-box {
+  padding: 0.75rem 1rem;
+
+  font-size: 1rem;
+
+  border-radius: 8px;
+
+  border: 1px solid #ccc;
+
+  width: 280px;
+
+  background-color: #f9fbfc;
+
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.search-box:hover,
+.filter-box:hover,
+.sort-box:hover {
+  border-color: #0078d4;
+
+  box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.15);
+
+  transform: translateY(-2px);
+}
+
+.search-box:focus,
+.filter-box:focus,
+.sort-box:focus {
+  border-color: #0078d4;
+
+  box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.2);
+
+  outline: none;
+}
+
+/* Replace Bootstrap-like modal names to avoid conflicts */
+
+.custom-modal-backdrop {
+  position: fixed;
+
+  top: 0;
+
+  left: 0;
+
+  width: 100%;
+
+  height: 100%;
+
+  backdrop-filter: blur(6px);
+
+  background: rgba(0, 0, 0, 0.35);
+
+  display: flex;
+
+  justify-content: center;
+
+  align-items: center;
+
+  z-index: 2000;
+}
+
+.custom-modal {
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+
+  padding: 2.25rem 2.25rem 2.5rem;
+
+  border-radius: 14px;
+
+  box-shadow: 0 18px 50px rgba(7, 37, 63, 0.35);
+
+  max-width: 480px;
+
+  width: 92%;
+
+  text-align: center;
+
+  animation: fadeIn 0.18s ease-in-out;
+
+  z-index: 2001;
+
+  color: #213547;
+
+  position: relative;
+
+  overflow: visible;
+}
+
+/* Enhanced header with subtle icon */
+
+.custom-modal h2 {
+  font-size: 1.9rem;
+
+  margin: 0 0 1rem 0;
+
+  font-weight: 700;
+
+  letter-spacing: 0.2px;
+
+  color: #0b3b66;
+}
+
+/* Specific styling for cash controls inside any custom modal */
+
+.custom-modal label {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 0.75rem;
+
+  padding: 0.6rem 0.75rem;
+
+  border-radius: 10px;
+
+  border: 1px solid #e3eef8;
+
+  background: linear-gradient(180deg, #ffffff, #f7fbff);
+
+  font-weight: 600;
+
+  color: #28445a;
+
+  margin: 0.4rem 0 1rem 0;
+}
+
+.custom-modal label input[type='checkbox'] {
+  width: 18px;
+
+  height: 18px;
+
+  accent-color: #0078d4;
+}
+
+.custom-modal select {
+  width: 100%;
+
+  padding: 0.75rem 0.9rem;
+
+  font-size: 1rem;
+
+  border-radius: 10px;
+
+  border: 1px solid #d6e8f8;
+
+  background: #fff;
+
+  color: #213547;
+
+  margin-bottom: 1.25rem;
+
+  box-shadow: inset 0 1px 2px rgba(16, 24, 40, 0.02);
+}
+
+/* Make the confirm button prominent and full width */
+
+.custom-modal .payment-options {
+  margin-top: 0.5rem;
+}
+
+.custom-modal .payment-options button {
+  display: block;
+
+  width: 100%;
+
+  padding: 1rem 1.25rem;
+
+  font-size: 1.05rem;
+
+  font-weight: 700;
+
+  border-radius: 12px;
+
+  border: none;
+
+  cursor: pointer;
+
+  background: linear-gradient(90deg, #0078d4, #00a3ff);
+
+  color: white;
+
+  box-shadow: 0 8px 20px rgba(3, 84, 162, 0.18);
+
+  transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+}
+
+.custom-modal .payment-options button:hover {
+  transform: translateY(-3px);
+
+  box-shadow: 0 12px 28px rgba(3, 84, 162, 0.22);
+}
+
+.custom-modal .payment-options button:active {
+  transform: translateY(-1px) scale(0.995);
+}
+
+/* Lighter, rounded cancel button below */
+
+.custom-modal .close-btn {
+  display: inline-block;
+
+  margin-top: 1.25rem;
+
+  padding: 0.55rem 1rem;
+
+  background: #f1f4f6;
+
+  color: #324a5f;
+
+  border-radius: 10px;
+
+  border: 1px solid #e6eef6;
+}
+
+.custom-modal .close-btn:hover {
+  background: #e9f0f6;
+}
+
+/* Small decorative cash icon above modal (pure CSS) */
+
+.custom-modal::before {
+  content: '💵';
+
+  position: absolute;
+
+  top: -28px;
+
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  font-size: 34px;
+
+  background: white;
+
+  border-radius: 50%;
+
+  padding: 6px;
+
+  box-shadow: 0 6px 18px rgba(12, 44, 78, 0.12);
+}
+
+/* Responsive tweaks */
+
+@media (max-width: 480px) {
+  .custom-modal {
+    padding: 1.5rem 1rem;
+  }
+
+  .custom-modal h2 {
+    font-size: 1.5rem;
+  }
+
+  .custom-modal::before {
+    top: -22px;
+    font-size: 28px;
+  }
+}
+
+/* Responsive */
 
 @media (max-width: 768px) {
   .admin-form .form-group {
@@ -176,78 +706,10 @@
   .record-table td {
     font-size: 0.9rem;
   }
-}
 
-.admin-form,
-.record-table {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.admin-form:hover,
-.record-table:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-}
-
-.record-table tbody tr {
-  transition: background-color 0.3s ease;
-  cursor: pointer;
-}
-
-.record-table tbody tr:hover {
-  background-color: #eaf4ff;
-}
-
-.admin-form input:hover,
-.admin-form select:hover {
-  border-color: #0078d4;
-  box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.15);
-}
-
-.admin-form button:active {
-  transform: scale(0.98);
-  background-color: #004c87;
-}
-.search-box,
-.filter-box,
-.sort-box {
-  padding: 0.75rem 1rem;
-  font-size: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  width: 280px;
-  background-color: #f9fbfc;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
-}
-
-.search-box:hover,
-.filter-box:hover,
-.sort-box:hover {
-  border-color: #0078d4;
-  box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.15);
-  transform: translateY(-2px);
-}
-
-.search-box:focus,
-.filter-box:focus,
-.sort-box:focus {
-  border-color: #0078d4;
-  box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.2);
-  outline: none;
-}
-
-.search-filter {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  justify-content: flex-start;
-  padding: 1rem 0;
-}
-
-@media (max-width: 768px) {
   .search-filter {
     flex-direction: column;
+
     align-items: stretch;
   }
 

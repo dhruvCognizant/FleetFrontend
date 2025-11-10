@@ -6,7 +6,6 @@
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
-
 .search-input {
   padding: 12px 18px;
   font-size: 1rem;
@@ -16,12 +15,10 @@
   width: 280px;
   transition: box-shadow 0.3s ease;
 }
-
 .search-input:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.4);
 }
-
 .search-btn {
   display: flex;
   align-items: center;
@@ -37,12 +34,10 @@
   cursor: pointer;
   transition: all 0.3s ease;
 }
-
 .search-btn:hover {
   transform: translateY(-2px);
   background: linear-gradient(135deg, #2980b9, #2471a3);
 }
-
 .fleet-table {
   margin-top: 30px;
   background-color: #fff;
@@ -53,56 +48,46 @@
   margin-left: auto;
   margin-right: auto;
 }
-
 .fleet-table table {
   width: 100%;
   border-collapse: collapse;
   font-family: 'Inter', sans-serif;
 }
-
 .fleet-table th,
 .fleet-table td {
   padding: 14px 18px;
   text-align: left;
   border-bottom: 1px solid #e0e0e0;
 }
-
 .fleet-table th {
   background-color: black;
   color: white;     
 }
-
 td{
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
-
 .fleet-table td {
   font-size: 0.9rem;
   color: #555;
 }
-
 .fleet-table tr:hover {
   background-color: #f9fbfc;
   transition: background-color 0.3s ease;
 }
-
 .status {
   padding: 6px 12px;
   border-radius: 20px;
   font-weight: 600;
   font-size: 0.85rem;
 }
-
 .status.active {
   background-color: #27ae60;
   color: white;
 }
-
 .status.service {
   background-color: #f39c12;
   color: white;
 }
-
 .table-action {
   background-color: #3498db;
   color: white;
@@ -114,11 +99,9 @@ td{
   transition: background-color 0.3s ease;
   margin-right: 6px;
 }
-
 .table-action:hover {
   background-color: #2980b9;
 }
-
 .table-action i {
   pointer-events: none;
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { TechnicianService } from '../../../services/technician.service';
@@ -6,7 +6,6 @@ import { Technician } from '../../../models/technician.model';
 import { ServiceAssignment } from '../../../models/assignment.model';
 import { FormatStatusPipe } from '../../../pipes/format-status-pipe';
 import { CommonService } from '../../../services/common-service';
-import { ViewChild } from '@angular/core';
 import { AssignmentDataService } from '../../../services/assignment-data.service';
 import { ServiceSchedulingComponent } from '../../../SCHEDULING/maintenance-scheduling/msadmin';
 
@@ -17,22 +16,21 @@ import { ServiceSchedulingComponent } from '../../../SCHEDULING/maintenance-sche
   templateUrl: './technician-assignment.html',
   styleUrls: ['./technician-assignment.css'],
 })
+
 export class TechnicianAssignmentComponent implements OnInit {
   
   // toggles between different UI states
-  currentView: 'addTechnician' | 'assignTask' | 'showList' = 'addTechnician';
+  currentView: 'assignTask' | 'showList' = 'assignTask';
 
   // Arrays to hold services
   technicians: Technician[] = [];
-  assignments: ServiceAssignment[] = [];
+assignments: ServiceAssignment[] = [];
   scheduledServices: any[] = [];
   selectedTechnicianName: string = '';
   isTaskConfirmed: boolean = false;
-
-  skills: Technician['skill'][] = ['Oil Change', 'Brake Check', 'Battery Test'];
+unassignedServicesList: any[] = [];
 
   // TS utility type, makes all properties optional
-  newTechnician: Partial<Technician> = {};
   newAssignment: Partial<ServiceAssignment> = {};
 
   // DI
@@ -46,117 +44,109 @@ export class TechnicianAssignmentComponent implements OnInit {
   @ViewChild(ServiceSchedulingComponent) serviceScheduler!: ServiceSchedulingComponent;
 
   // Initializes data and resets form models when the component loads
-  ngOnInit(): void {
-    this.refreshData();
-    this.resetNewTechnician();
-    this.resetNewAssignment();
+ngOnInit(): void {
+  this.refreshData();
+  this.resetNewAssignment();
+
+  this.commonService.getUnassignedServices().subscribe({
+  next: (services: any[]) => {
+    console.log('Unassigned services received:', services);
+    this.unassignedServicesList = services;
+  },
+  error: (err) => {
+    console.error('Failed to load unassigned services:', err);
   }
+});
+
+}
+
 
   // Fetches technicians, services, and assignments
-  refreshData(): void {
-    this.technicians = this.techService.getTechnicians();
-    this.scheduledServices = this.commonService.getScheduledServices();
-    this.assignments = this.techService.getAssignments();
-  }
+ refreshData(): void {
+  this.technicians = this.techService.getTechnicians();
+
+  this.commonService.getScheduledServices().subscribe({
+    next: (services: any[]) => {
+      this.scheduledServices = services;
+    },
+    error: (err) => {
+      console.error('Failed to load scheduled services:', err);
+      this.scheduledServices = [];
+    }
+  });
+
+  this.loadAssignments(); 
+}
+
+loadAssignments(): void {
+  this.commonService.fetchAssignedServices().subscribe({
+    next: (res: ServiceAssignment[]) => {
+      console.log('Assigned services:', res);
+      this.assignments = res;
+    },
+    error: (err) => {
+      console.error('Failed to load assignments:', err);
+    }
+  });
+}
 
   // Changes the current view
-  showView(view: 'addTechnician' | 'assignTask' | 'showList'): void {
+  showView(view: 'assignTask' | 'showList'): void {
     this.currentView = view;
   }
 
   // Initializes form models with default values
-  resetNewTechnician(): void {
-    this.newTechnician = { skill: this.skills[0], availability: 'Available' };
-  }
   resetNewAssignment(): void {
     this.newAssignment = { status: 'Assigned' };
     this.selectedTechnicianName = '';
     this.isTaskConfirmed = false;
   }
 
-  // Handles adding a new technician
-  onAddTechnician(form: NgForm): void {
-    if (form.invalid) return;
-    try {
-      const generatedId = this.commonService.generateTechnicianId();
-      const payload: Technician = {
-        technicianId: generatedId,
-        name: String(this.newTechnician.name).trim(),
-        skill: this.newTechnician.skill!,
-        availability: this.newTechnician.availability!,
-      };
-
-      this.techService.addTechnician(payload);
-      this.commonService.RegisterTechnicians({
-        name: payload.name,
-        expertise: payload.skill,
-        available: payload.availability === 'Available',
-      });
-      alert(
-        `Technician ${payload.name} added successfully! \nTechnician ID ${payload.technicianId} has been created.`
-      );
-      if (this.serviceScheduler) {
-        console.log('if worked 1');
-        this.serviceScheduler.refreshDropdowns();
-      }
-      this.refreshData();
-      form.resetForm(this.newTechnician);
-      this.resetNewTechnician();
-    } catch (e: any) {
-      alert(`Error: ${e.message}`);
-    }
-  }
-
   // Handles assigning a task
-  onAssignTask(form: NgForm): void {
-    if (form.invalid || !this.isTaskConfirmed) return;
-    try {
-      if (!this.selectedTechnicianName) {
-        throw new Error('No technician is associated with the selected service.');
-      }
-      const matchedTech = this.technicians.find(
-        (t) => t.name.trim() === this.selectedTechnicianName.trim()
-      );
-      if (!matchedTech || !matchedTech.technicianId) {
-        throw new Error(
-          `Could not find a registered technician with the name "${this.selectedTechnicianName}".`
-        );
-      }
-      const generatedId = this.commonService.generateAssignmentId();
-      const payload: ServiceAssignment = {
-        assignmentId: generatedId,
-        serviceId: String(this.newAssignment.serviceId),
-        technicianId: matchedTech.technicianId,
-        status: 'Assigned',
-      };
-      this.techService.assignTask(payload);
-      alert(
-        `Task assigned successfully! \nAssignment ID ${payload.assignmentId} has been created.`
-      );
+ onAssignTask(form: NgForm): void {
+  if (form.invalid || !this.isTaskConfirmed) return;
 
-      this.refreshData();
-      form.resetForm();
-      this.resetNewAssignment();
-    } catch (e: any) {
-      alert(`Error: ${e.message}`);
-    }
+  const selectedServiceId = this.newAssignment._id;
+  if (!selectedServiceId) {
+    alert('Please select a service to assign.');
+    return;
   }
+
+  this.commonService.assignServiceToTechnician({ serviceId: selectedServiceId }).subscribe({
+  next: (res) => {
+  alert(`${res.message} (Service ID: ${res.serviceId})`);
+
+  // Remove from dropdown immediately
+  this.unassignedServicesList = this.unassignedServicesList.filter(
+    (s) => s._id !== selectedServiceId
+  );
+
+  this.refreshData();
+  form.resetForm();
+  this.resetNewAssignment();
+}
+
+  });
+}
+
 
   // Retrieves technician name by ID
-  getTechnicianName(id: number): string {
+  getTechnicianName(id: string): string {
     return this.techService.getTechnicianName(id);
   }
 
   // Updates selected technician name based on service ID
-  onServiceIdChange(): void {
-    const selectedServiceId = this.newAssignment.serviceId;
-    const service = this.scheduledServices.find((s) => s.serviceId === selectedServiceId);
-    this.selectedTechnicianName = service?.technician || '';
-  }
+ onServiceIdChange(): void {
+  const selectedServiceId = this.newAssignment._id;
+  const service = this.unassignedServicesList.find((s) => s._id === selectedServiceId);
+  this.selectedTechnicianName = service?.technicianName || '';
+}
+
+
 
   // Returns services that haven't been assigned yet
   get unassignedServices() {
-    const assignedServiceIds = this.assignments.map((a) => a.serviceId);
+    const assignedServiceIds = this.assignments.map((a) => a._id);
     return this.scheduledServices.filter((s) => !assignedServiceIds.includes(s.serviceId));
   }
 }

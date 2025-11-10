@@ -3,78 +3,209 @@ import { NgForm } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CommonService } from '../../services/common-service';
+import { TechnicianService } from '../../services/technician.service';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-user-admin',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './user-admin.html',
-  styleUrl: './user-admin.css',
+  styleUrls: ['./user-admin.css'],
 })
 export class UserAdmin implements OnInit {
-  constructor(private commonService: CommonService) {}
+  constructor(
+    private commonService: CommonService,
+    private techService: TechnicianService,
+    private http: HttpClient
+  ) {}
 
-  // Form fields
   newVehicleId: string = '';
   newDate: string = '';
-  newPaymentStatus: string = '';
   newTechnician: string = '';
   newStatus: string = '';
   newType: string = '';
   newCost: number = 0;
 
-  // Dropdown options
-  vehicleIds: string[] = [];
-  statusOptions: string[] = ['Completed', 'In Progress', 'Pending'];
+  showPaymentModal: boolean = false;
+  showUpiModal: boolean = false;
+  showCashModal: boolean = false;
 
-  // Service types and costs
+  upiId: string = '';
+  cashInHand: boolean = false;
+  cashCollected: string = '';
+  pendingRecord: any = null;
+
+  statusOptions: string[] = ['Completed', 'In Progress', 'Pending'];
   services = [
     { name: 'Oil Change', cost: 12000 },
     { name: 'Brake Check', cost: 6000 },
     { name: 'Battery Test', cost: 15000 },
   ];
 
-  // Records list
   records: any[] = [];
-
-  // Search and sort
   searchTerm: string = '';
   filterStatus: string = '';
   sortOrder: string = '';
+  dropdownEntries: any[] = [];
 
-  ngOnInit(): void {
-    console.log('Vehicle IDs:', this.vehicleIds);
+  async ngOnInit(): Promise<void> {
+    await this.refreshDropdownData();
+    await this.loadHistories();
+  }
+
+  async refreshDropdownData(): Promise<void> {
+    try {
+      const scheduled = await this.commonService.getScheduledServicesApi();
+
+      // Filter only completed services
+      const completedServices = (scheduled || []).filter(
+        (service: any) =>
+          service.status === 'Completed' && service.payment?.paymentStatus === 'Unpaid'
+      );
+
+      const completedHistoryIds = (await this.commonService.getCompletedRecords()).map(
+        (r: any) => r.serviceId
+      );
+
+      this.dropdownEntries = completedServices
+        .map((service: any) => {
+          const isAlreadyInHistory = completedHistoryIds.includes(service._id);
+
+          return {
+            serviceId: service._id,
+            vin: service.vehicleVIN,
+            technician: service.technicianName || service.technicianId,
+            serviceType: service.serviceType,
+            date: service.assignmentDate,
+            isDisabled: isAlreadyInHistory,
+            isCompleted: service.status === 'Completed',
+            isAlreadyInHistory,
+          };
+        })
+        .filter((entry: any) => entry.vin && entry.serviceId);
+    } catch (err) {
+      console.error('Error loading dropdown data:', err);
+    }
   }
 
   addRecord(form: NgForm) {
     if (form.valid) {
+      const selectedEntry = this.dropdownEntries.find((e) => e.serviceId === this.newVehicleId);
+
+      if (!selectedEntry) {
+        alert('Error: Could not find selected service.');
+        return;
+      }
+
       const newRecord = {
         date: new Date(this.newDate),
-        vehicleId: this.newVehicleId,
+        vehicleId: selectedEntry.vin,
+        serviceId: this.newVehicleId,
         status: this.newStatus,
         type: this.newType,
         cost: this.newCost,
         technician: this.newTechnician,
-        paymentStatus: this.newPaymentStatus,
+        paymentStatus: 'Unpaid',
+        paymentMethod: '',
       };
-      this.records.push(newRecord);
-      this.commonService.addCompletedRecord(newRecord);
+
+      if (newRecord.status === 'Completed') {
+        this.pendingRecord = newRecord;
+        this.showPaymentModal = true;
+      } else {
+        this.records.push(newRecord);
+        this.commonService.addCompletedRecord(newRecord);
+      }
+
       form.resetForm();
+      this.newVehicleId = '';
+      this.resetAutoPopulatedFields();
     }
   }
 
-  onVehicleSelect(): void {
-    const selected = this.commonService
-      .getScheduledServices()
-      .find((s) => s.vehicleId === this.newVehicleId);
+  resetAutoPopulatedFields(): void {
+    this.newDate = '';
+    this.newTechnician = '';
+    this.newType = '';
+    this.newCost = 0;
+    this.newStatus = '';
+  }
 
-    if (selected) {
-      this.newDate = selected.dueDate;
-      this.newTechnician = selected.technician;
-      this.newType = selected.serviceType;
-      this.newCost = this.services.find((s) => s.name === selected.serviceType)?.cost || 0;
-      this.newStatus = 'Pending';
-      this.newPaymentStatus = 'Unpaid';
+  selectPayment(method: string) {
+    if (this.pendingRecord) {
+      if (method === 'UPI') {
+        this.showPaymentModal = false;
+        this.showUpiModal = true;
+      } else if (method === 'Cash') {
+        this.showPaymentModal = false;
+        this.showCashModal = true;
+      } else {
+        this.pendingRecord.paymentStatus = 'Paid';
+        this.pendingRecord.paymentMethod = method;
+        this.records.push(this.pendingRecord);
+        this.commonService.addCompletedRecord(this.pendingRecord);
+        this.commonService.markTechnicianAvailable(this.pendingRecord.technician);
+        this.pendingRecord = null;
+        this.showPaymentModal = false;
+      }
+    }
+  }
+
+  confirmUpiPayment() {
+    if (this.pendingRecord && this.upiId.trim()) {
+      this.pendingRecord.paymentStatus = 'Paid';
+      this.pendingRecord.paymentMethod = `UPI (${this.upiId})`;
+      this.records.push(this.pendingRecord);
+      this.commonService.addCompletedRecord(this.pendingRecord);
+      this.commonService.markTechnicianAvailable(this.pendingRecord.technician);
+      this.pendingRecord = null;
+      this.upiId = '';
+      this.showUpiModal = false;
+    }
+  }
+
+  confirmCashPayment() {
+    if (this.pendingRecord && this.cashCollected) {
+      this.pendingRecord.paymentStatus = this.cashCollected === 'Yes' ? 'Paid' : 'Pending';
+      this.pendingRecord.paymentMethod = this.cashInHand
+        ? 'Cash (in hand)'
+        : 'Cash (not in hand / UPI)';
+      this.records.push(this.pendingRecord);
+      this.submitPaymentToBackend(this.pendingRecord.serviceId, this.pendingRecord.cost);
+
+      this.commonService.addCompletedRecord(this.pendingRecord);
+      this.commonService.markTechnicianAvailable(this.pendingRecord.technician);
+      this.pendingRecord = null;
+      this.cashInHand = false;
+      this.cashCollected = '';
+      this.showCashModal = false;
+    }
+  }
+
+  closeModal() {
+    this.pendingRecord = null;
+    this.showPaymentModal = false;
+    this.showUpiModal = false;
+    this.showCashModal = false;
+  }
+
+  onVehicleSelect(): void {
+    const selectedEntry = this.dropdownEntries.find(
+      (entry) => entry.serviceId === this.newVehicleId
+    );
+
+    if (selectedEntry) {
+      this.newDate = selectedEntry.date
+        ? new Date(selectedEntry.date).toISOString().split('T')[0]
+        : '';
+
+      this.newTechnician = selectedEntry.technician;
+      this.newType = selectedEntry.serviceType;
+      this.newCost = this.commonService.getServiceCost(selectedEntry.serviceType);
+      this.newStatus = 'Completed';
+    } else {
+      this.resetAutoPopulatedFields();
     }
   }
 
@@ -105,13 +236,45 @@ export class UserAdmin implements OnInit {
   get typeOptions(): string[] {
     return [...new Set(this.services.map((s) => s.name))];
   }
-  ngDoCheck(): void {
-    const scheduled = this.commonService.getScheduledServices();
 
-    // Get IDs already used in records
-    const usedIds = this.records.map((r) => r.vehicleId);
+  submitPaymentToBackend(serviceId: string, cost: number): void {
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
-    // Filter out used IDs from scheduled list
-    this.vehicleIds = scheduled.map((s) => s.vehicleId).filter((id) => !usedIds.includes(id));
+    const payload = {
+      serviceId,
+      paymentStatus: 'Paid',
+      cost,
+    };
+
+    this.http.post('http://localhost:5000/api/history/addService', payload, { headers }).subscribe({
+      next: (res: any) => {
+        alert(`Payment recorded. History ID: ${res.historyId}`);
+        this.refreshDropdownData(); // Refresh dropdown to disable completed entries
+      },
+      error: (err) => {
+        alert(`Failed to record payment: ${err.error?.message || err.message}`);
+      },
+    });
+  }
+
+  async loadHistories(): Promise<void> {
+    try {
+      const histories =
+        ((await this.commonService.getServiceHistories().toPromise()) as any[]) ?? [];
+
+      this.records = histories.map((h) => ({
+        date: h.createdAt,
+        vehicleId: h.vehicleVIN,
+        status: h.workStatus,
+        type: h.serviceType,
+        cost: h.cost,
+        technician: h.technicianName || '—',
+        paymentStatus: h.paymentStatus,
+        paymentMethod: '—', // optional: extend schema if needed
+      }));
+    } catch (err) {
+      console.error('Failed to load histories:', err);
+    }
   }
 }

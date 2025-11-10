@@ -6,9 +6,7 @@
       Schedule maintenance services by connecting vehicles with available technicians.
     </p>
   </div>
-
   <!-- Summary Cards Section -->
-
   <div class="section-box full-width">
     <div class="row card-row">
       <div class="col-md-4">
@@ -22,70 +20,89 @@
       <div class="col-md-4">
         <div class="card text-center">
           <div class="card-body">
-            <h5>Available Technicians</h5>
-            <p class="fs-4">{{ availableTechnicians.length }}</p>
+            <h5>Available Technicians Today</h5>
+            <p class="fs-4">{{ availableTechniciansCount }}</p>
           </div>
         </div>
       </div>
+
       <div class="col-md-4">
         <div class="card text-center">
           <div class="card-body">
-            <h5>Scheduled Services</h5>
+            <h5>Services</h5>
             <p class="fs-4">{{ scheduledServices.length }}</p>
           </div>
         </div>
       </div>
     </div>
   </div>
-
   <!-- Schedule Form Section -->
   <div class="section-box narrow-center">
-    <h4>+ Schedule New Service</h4>
+    <h4>Schedule New Service</h4>
     <form [formGroup]="scheduleForm" (ngSubmit)="submitService()" class="mb-4">
       <div class="row">
         <div class="col-md-3 mb-3">
-          <label>Select Vehicle</label>
-          <select class="form-select" formControlName="vehicleId">
-            <option *ngFor="let v of availableVehicles" [value]="v.vehicleId">
-              {{ v.vehicleId }} - {{ v.Make }} {{ v.model }}
+          <label>Select Vehicle <span class="required-asterisk">*</span></label>
+          <select
+            class="form-select"
+            formControlName="vin"
+            (change)="vehicleChanged($any($event.target).value)"
+          >
+            <option [ngValue]="null" disabled>Select a vehicle</option>
+            <option *ngFor="let v of availableVehicles" [value]="v.VIN">
+              {{ v.VIN }} - {{ v.make }} {{ v.model }}
             </option>
           </select>
         </div>
-
         <div class="col-md-3 mb-3">
-          <label>Assign Technician</label>
+          <label>Assign Technician <span class="required-asterisk">*</span></label>
           <select class="form-select" formControlName="technician">
-            <option *ngFor="let t of availableTechnicians" [value]="t.name">{{ t.name }}</option>
+            <option [ngValue]="null" disabled>Select an available technician</option>
+            <!-- Each option now shows the technician's availability day -->
+            <!-- The [disabled] property makes the option unselectable if isSelectable is false -->
+            <option
+              *ngFor="let t of techniciansForDropdown"
+              [value]="t.name"
+              [disabled]="!t.isSelectable"
+            >
+              {{ t.name }}
+            </option>
           </select>
         </div>
-
         <div class="col-md-3 mb-3">
-          <label>Service Type</label>
-          <select class="form-select" formControlName="serviceType" (change)="checkOther($event)">
-            <option *ngFor="let type of serviceTypes" [value]="type">{{ type }}</option>
-          </select>
+          <label>Service Type <span class="required-asterisk">*</span></label>
+          <!-- This has been changed from a dropdown to a read-only input -->
           <input
-            *ngIf="showOtherInput"
             type="text"
-            class="form-control mt-2"
-            placeholder="Enter service type"
-            formControlName="customServiceType"
+            class="form-control"
+            formControlName="serviceType"
+            placeholder="Auto-filled from technician"
+            readonly
           />
         </div>
-
         <div class="col-md-3 mb-3">
-          <label>Due Date</label>
+          <label>Due Date <span class="required-asterisk">*</span></label>
           <input type="date" class="form-control" [min]="minDate" formControlName="dueDate" />
         </div>
       </div>
-
-      <button type="submit" class="btn btn-primary">+Schedule</button>
+      <div class="row">
+        <div class="col-md-3 mb-3">
+          <label>Next Service Mileage <span class="required-asterisk">*</span></label>
+          <input type="text" class="form-control" [value]="nextServiceKmDisplay" readonly />
+        </div>
+        <div class="col-md-3 mb-3">
+          <label>Next Service Date <span class="required-asterisk">*</span></label>
+          <input type="date" class="form-control" [value]="nextServiceDateDisplay" readonly />
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary" [disabled]="scheduleForm.invalid">
+        Schedule
+      </button>
     </form>
   </div>
-
   <!-- Scheduled Services List Section -->
   <div class="section-box full-width">
-    <h4>Scheduled Services</h4>
+    <h4>Services</h4>
     <table class="table table-bordered table-hover">
       <thead class="table-light">
         <tr>
@@ -98,11 +115,17 @@
       </thead>
       <tbody>
         <tr *ngFor="let service of scheduledServices">
-          <td>{{ service.serviceId }}</td>
-          <td>{{ service.vehicleId }}</td>
-          <td>{{ service.technician }}</td>
+          <td>{{ service._id }}</td>
+          <td>{{ service.vehicleVIN }}</td>
+          <td>{{ service.technicianName || 'No technician assigned' }}</td>
           <td>{{ service.serviceType }}</td>
-          <td>{{ service.dueDate | date }}</td>
+          <td>
+            {{
+              service.payment?.paymentStatus === 'Paid'
+                ? 'Completed'
+                : (service.dueServiceDate | date : 'mediumDate')
+            }}
+          </td>
         </tr>
       </tbody>
     </table>

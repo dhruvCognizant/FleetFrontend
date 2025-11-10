@@ -1,20 +1,14 @@
-body {
-  background-color: #0f1c2e;
-  height: 100vh;
-  margin: 0;
-}
 h2 {
   text-align: center;
   margin: 0 0 2rem 0;
   color: #1a1a1a;
-  padding-top: 30px;
-  font-size: 1.6rem;
+  padding-top: 20px;
+  font-size: 2rem;
   font-weight: 600;
   letter-spacing: 0.5px;
   line-height: 1.4;
   font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
 }
-
 p {
   padding-top: 10px;
   text-align: center;
@@ -36,7 +30,7 @@ button a {
   width: 100%;
   padding: 0.8rem;
   font-size: 1rem;
-  background-color: #172e82;
+  background-color: #28a745;
   color: #fff;
   text-decoration: none;
   border-radius: 6px;
@@ -46,18 +40,20 @@ button a {
 .reg-button {
   text-align: center;
 }
-
 .form-group {
   margin-bottom: 1.5rem;
+  position: relative;
 }
-
 label {
   display: block;
-  margin-bottom: 0.1rem;
+  margin-bottom: 0.5rem;
   font-weight: 600;
   color: #444;
 }
-
+.required-asterisk {
+  color: red;
+  margin-left: 2px;
+}
 .form-control {
   width: 100%;
   padding: 0.7rem 0.9rem;
@@ -65,20 +61,18 @@ label {
   border: 1px solid #ccc;
   border-radius: 6px;
   transition: border-color 0.3s ease;
+  box-sizing: border-box;
 }
-
 .form-control:focus {
   border-color: #007bff;
   outline: none;
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
 }
-
 .error {
   color: #e63946;
   font-size: 0.85rem;
   margin-top: 0.3rem;
 }
-
 .btn {
   width: 100%;
   padding: 0.8rem;
@@ -90,36 +84,48 @@ label {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
-
 .btn:hover {
   background-color: #0056b3;
 }
-
 .btn:disabled {
   background-color: #aaa;
   cursor: not-allowed;
 }
-
-.register {
-  color: #007bff;
-  text-decoration: none;
-  font-weight: 500;
+.password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
-
-.register:hover {
-  text-decoration: underline;
+.password-wrapper .form-control {
+  padding-right: 40px;
+}
+.toggle-password {
+  position: absolute;
+  right: 1px;
+  top: 1px;
+  bottom: 1px;
+  width: 40px;
+  border: none;
+  background: transparent;
+  padding: 0 12px;
+  cursor: pointer;
+  color: #7f8c8d;
+  font-size: 1.2rem;
 }
 .login-wrapper {
   max-width: 420px;
-  margin: 20px auto;
-  padding: 1.5rem 2rem;
+  max-height: none;
+  margin: auto;
+  padding: 2rem;
   border-radius: 10px;
+  overflow: visible;
+  overflow-y: auto;
   background-color: #ffffff;
   background-image: url('/images/logo.png');
   background-size: cover;
   background-position-y: -100px;
   background-position-x: center;
-  background-size: 270px;
+  background-size: 300px;
   background-repeat: no-repeat;
   box-shadow: 0 8px 20px rgba(1, 1, 1, 0.1);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -131,5 +137,13 @@ label {
 .login-wrapper:hover {
   transform: scale(1.03);
   box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+body {
+  background-color: #0f1c2e;
+  height: 100vh;
+  margin: 0;
+}
+html, body {
+  height: 100%;
+  overflow: hidden;
 }

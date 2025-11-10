@@ -1,6 +1,22 @@
 export interface ServiceAssignment {
-    assignmentId: number;
-    serviceId: string;
-    technicianId: number;
-    status: 'Assigned' | 'Work In Progress' | 'Completed';
+  _id: string;
+  vehicleVIN: string;
+  serviceType: string;
+  description?: string;
+  dueServiceDate?: string;
+  technicianId: {
+    _id: string;
+    firstName: string;
+    lastName: string;
+  };
+  technicianName: string;
+  status: string;
+  assignmentDate?: string;
+  completedOn?: string;
+  technicianCompletedOn?: string;
+  payment?: {
+    createdAt: string;
+    updatedAt: string;
+    __v?: number;
+  };
 }

@@ -4,4 +4,8 @@
     <h3>{{ stat.title }}</h3>
     <p>{{ stat.count }}</p>
   </div>
+
+  <p *ngIf="stats.length === 0" style="padding: 1rem; color: #888">
+    No dashboard data available.
+  </p>
 </div>

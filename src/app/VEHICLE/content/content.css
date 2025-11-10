@@ -5,7 +5,6 @@
   margin: 30px 0;
   justify-content: center;
 }
-
 .action-btn {
   display: flex;
   align-items: center;
@@ -21,16 +20,13 @@
   cursor: pointer;
   transition: all 0.3s ease;
 }
-
 .action-btn i {
   font-size: 1.1rem;
 }
-
 .action-btn:hover {
   transform: translateY(-2px);
   background: linear-gradient(135deg, #2980b9, #2471a3);
 }
-
 .search-bar {
   display: flex;
   justify-content: center;
@@ -39,7 +35,6 @@
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
-
 .search-input {
   padding: 12px 18px;
   font-size: 1rem;
@@ -49,12 +44,10 @@
   width: 280px;
   transition: box-shadow 0.3s ease;
 }
-
 .search-input:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.4);
 }
-
 .search-btn {
   display: flex;
   align-items: center;
@@ -70,18 +63,44 @@
   cursor: pointer;
   transition: all 0.3s ease;
 }
-
 .search-btn:hover {
   transform: translateY(-2px);
   background: linear-gradient(135deg, #2980b9, #2471a3);
 }
-
 .action-btn.selected {
   transform: translateY(-2px);
   background: linear-gradient(135deg, #2980b9, #2471a3);
 }
-
 .btn:disabled {
   background-color: #aaa;
   cursor: not-allowed;
+}
+/* Container to add horizontal padding for service dropdown */
+.service-dropdown-wrapper {
+  padding: 0 20px;
+}
+
+#serviceType {
+  padding: 12px 16px;
+  font-size: 1rem;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+#serviceType:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+}
+
+label[for="serviceType"] {
+  font-weight: 600;
+  margin-bottom: 6px;
+  display: block;
+  color: #333;
 }

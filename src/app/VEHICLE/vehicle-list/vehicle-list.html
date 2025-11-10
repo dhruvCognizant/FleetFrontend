@@ -1,29 +1,22 @@
 <!-- Search Bar -->
 <div class="search-bar">
-  <input
-    [(ngModel)]="searchQuery"
-    type="text"
-    placeholder="Search vehicles..."
-    class="search-input"
-  />
+  <input [(ngModel)]="searchQuery" class="search-input" placeholder="Search vehicles..." />
+
   <button class="search-btn"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
 </div>
-
 <!-- Fleet Table -->
 <div class="fleet-table">
   <table>
     <thead class="table-dark">
       <tr>
-        <th>Vehicle ID</th>
         <th>Type</th>
         <th>Make</th>
         <th>Model</th>
         <th>Year</th>
         <th>VIN</th>
         <th>Last Service</th>
-        <th>Latest Mileage</th>
+        <th>Next Service Mileage</th>
         <th>Status</th>
-        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -33,27 +26,30 @@
         </td>
       </tr>
       <tr *ngFor="let vehicle of vehicles | searchId : searchQuery">
-        <td>{{ vehicle.vehicleId | uppercase }}</td>
         <td>{{ vehicle.type }}</td>
-        <td>{{ vehicle.Make }}</td>
+        <td>{{ vehicle.make }}</td>
         <td>{{ vehicle.model }}</td>
         <td>{{ vehicle.year }}</td>
-        <td>{{ vehicle.vin | uppercase }}</td>
-        <td>{{ vehicle.lastService | date }}</td>
+        <td>{{ vehicle.VIN }}</td>
+        <td>{{ vehicle.lastServiceDate | date }}</td>
         <!-- this is for mileage if empty -->
         <td>
-          <span *ngIf="getLatestMileage(vehicle.vehicleId) !== null; else noReading">
-            {{ getLatestMileage(vehicle.vehicleId) | number }}
+          <span
+            *ngIf="
+              vehicle.nextServiceMileage !== null &&
+                vehicle.nextServiceMileage !== undefined &&
+                vehicle.nextServiceMileage !== 0;
+              else noNext
+            "
+          >
+            {{ vehicle.nextServiceMileage | number }}
           </span>
-          <ng-template #noReading>
-            <span class="badge bg-warning text-dark">No Reading</span>
+          <ng-template #noNext>
+            <span class="badge bg-warning text-dark">No Next Service</span>
           </ng-template>
         </td>
         <td>
-          <button
-            class="btn btn-sm btn-outline-info"
-            (click)="openMileageHistory(vehicle.vehicleId)"
-          >
+          <button class="btn btn-sm btn-outline-info" (click)="openMileageHistory(vehicle.VIN)">
             View Mileage History
           </button>
         </td>
@@ -66,7 +62,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">
-            Mileage History for {{ selectedVehicle?.Make | uppercase }}
+            Mileage History for {{ selectedVehicle?.make | uppercase }}
             {{ selectedVehicle?.model | uppercase }}
           </h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>

@@ -8,4 +8,5 @@ import { RouterModule } from '@angular/router';
   templateUrl: './landing-page.html',
   styleUrls: ['./landing-page.css']
 })
+
 export class LandingPageComponent {}

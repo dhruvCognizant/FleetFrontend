@@ -2,87 +2,127 @@ import { Injectable } from '@angular/core';
 import { Technician } from '../models/technician.model';
 import { ServiceAssignment } from '../models/assignment.model';
 import { CommonService } from './common-service';
- 
-// decorator marks the class as available for DI at root level
+import { HttpHeaders ,HttpClient} from '@angular/common/http';
+import { Observable, map } from 'rxjs';
+import { catchError, of } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
+
 export class TechnicianService {
   private technicians: Technician[] = [];
   private assignments: ServiceAssignment[] = [];
- 
-  constructor(private commonService: CommonService) {
+  constructor(private commonService: CommonService, private http: HttpClient) {
     const initialCommonTechnicians = this.commonService.getRegisteredTechnicians();
-    this.technicians = initialCommonTechnicians.map((tech, index) => ({
-      technicianId: 101 + index,
-      name: tech.name,
-      skill: tech.expertise as Technician['skill'],
-      availability: tech.available ? 'Available' : 'Not Available',
-    }));
+   this.technicians = initialCommonTechnicians.map((tech) => ({
+  _id: tech._id,
+  firstName: tech.firstName,
+  lastName: tech.lastName,
+  email: tech.email,
+  credential: tech.credential,
+  skill: tech.expertise as Technician['skill'],
+  availability: [tech.isAssigned ? 'Not Available' : 'Available'], 
+}));
+
   }
- 
-  // copy of technician list
+  private API_BASE = '/api'; 
+
+  private pad(num: number): string {
+    return String(num).padStart(3, '0');
+  }
+
+  generateAssignmentId(): string {
+    const nextId = this.assignments.length + 1; 
+    return 'A' + this.pad(nextId);
+  }
+
   getTechnicians(): Technician[] {
     return [...this.technicians];
   }
- 
-  addTechnician(technician: Technician): Technician {
-    const id = Number(technician.technicianId);
-    if (!Number.isFinite(id) || id <= 0) {
-      throw new Error('Technician ID must be a positive number.');
-    }
-    if (this.technicians.some((t) => t.technicianId === id)) {
-      throw new Error('Technician ID must be unique.');
-    }
-    const newTech = { ...technician, technicianId: id };
-    this.technicians.push(newTech);
-    console.log(this.technicians,newTech);
-    return { ...newTech };
-  }
- 
-  // copy of the assignment list
-  getAssignments(): ServiceAssignment[] {
-    return [...this.assignments];
-  }
- 
-  // Finds and returns the name of a technician by ID
-  getTechnicianName(id: number): string {
-    const tech = this.technicians.find((t) => t.technicianId === id);
-    return tech ? tech.name : 'Unknown';
+
+ addTechnician(technician: Technician): Technician {
+  const id = technician._id;
+  if (!id || id.trim() === '') {
+    throw new Error('Technician _id must be a non-empty string.');
   }
 
+  if (this.technicians.some((t: Technician) => t._id === id)) {
+    throw new Error('Technician _id must be unique.');
+  }
+
+  const newTech = { ...technician };
+  this.technicians.push(newTech);
+  console.log(this.technicians, newTech);
+  return { ...newTech };
+}
+
+
+  getAssignments(): Observable<ServiceAssignment[]> {
+  const token = sessionStorage.getItem('token');
+  const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+  return this.http.get<ServiceAssignment[]>(
+    'http://localhost:5000/api/technician/assignments',
+    { headers }
+  );
+}
+
+
+
+
+  getTechnicianName(id: string): string {
+  const tech = this.technicians.find(t => t._id === id);
+  return tech ? `${tech.firstName} ${tech.lastName}` : 'Unknown';
+}
+
+
   assignTask(assignment: ServiceAssignment): ServiceAssignment {
-    if (!Number.isFinite(assignment.assignmentId) || assignment.assignmentId <= 0) {
-      throw new Error('Assignment ID must be a positive number.');
-    }
+    
     if (
-      !assignment.serviceId ||
-      typeof assignment.serviceId !== 'string' ||
-      assignment.serviceId.trim() === ''
+      !assignment._id ||
+      typeof assignment._id !== 'string' ||
+      assignment._id.trim() === ''
     ) {
       throw new Error('Service ID is required and cannot be empty.');
     }
-    if (!Number.isFinite(assignment.technicianId) || assignment.technicianId <= 0) {
-      throw new Error('Technician ID is invalid or missing.');
-    }
-    if (this.assignments.some((a) => a.assignmentId === assignment.assignmentId)) {
-      throw new Error('Assignment ID must be unique.');
-    }
+
+   
+
+   
+
     const newAssignment = { ...assignment };
     this.assignments.push(newAssignment);
     return { ...newAssignment };
   }
 
-  // find assignment by ID, updates status, return updated assignment
-  updateAssignmentStatus(
-    assignmentId: number,
-    newStatus: ServiceAssignment['status']
-  ): ServiceAssignment {
-    const assignment = this.assignments.find((a) => a.assignmentId === assignmentId);
-    if (!assignment) {
-      throw new Error('Assignment not found.');
-    }
-    assignment.status = newStatus;
-    return { ...assignment };
-  }
+  updateAssignmentStatus(id: string, status: string): Observable<any> {
+  const token = sessionStorage.getItem('token');
+  const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+ return this.http.patch(
+  `http://localhost:5000/api/technician/assignments/${id}/status`,
+  { status },
+  { headers }
+);
+
+}
+getTechnicianIdFromCredential(credentialId: string): Observable<string | null> {
+  const token = sessionStorage.getItem('token');
+  const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+  return this.http.get<Technician[]>(`${this.API_BASE}/technicians`, { headers }).pipe(
+    map(techs => {
+      const match = techs.find(t => t.credential === credentialId);
+      return match?._id ?? null;
+    }),
+    catchError(err => {
+      console.error('Failed to fetch technicians:', err);
+      return of(null);
+    })
+  );
+}
+
+
+
+
 }

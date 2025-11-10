@@ -4,24 +4,43 @@
       <div class="header">
         <img src="images/logo.png" alt="FleetCare Logo" class="logo" />
       </div>
-      <div class="nav-links">
-        <!-- Admin links -->
-        <a *ngIf="role === 'admin'" routerLink="/login/admin/dashboard">Dashboard</a>
-        <a *ngIf="role === 'admin'" routerLink="/login/admin/Content">Vehicles</a>
-        <a *ngIf="role === 'admin'" routerLink="/login/admin/Schedule">Schedule</a>
-        <a *ngIf="role === 'admin'" routerLink="/login/admin/Technicians">Technicians</a>
-        <a *ngIf="role === 'admin'" routerLink="/login/admin/History">History</a>
-        <!-- Technician links -->
-        <a *ngIf="role === 'technician'" routerLink="/login/technician/">Dashboard</a>
-        <a *ngIf="role === 'technician'" routerLink="/login/technician/Technician"
-          >Technician Tasks</a
-        >
+
+      <div class="nav-links" [class.show-mobile]="menuOpen">
+        <!-- Admin Links -->
+        <a *ngIf="role === 'admin'" routerLink="/admin/dashboard" (click)="closeMenu()">Dashboard</a>
+        <a *ngIf="role === 'admin'" routerLink="/admin/vehicle" (click)="closeMenu()">Vehicles</a>
+        <a *ngIf="role === 'admin'" routerLink="/admin/schedule" (click)="closeMenu()">Scheduling</a>
+        <a *ngIf="role === 'admin'" routerLink="/admin/technician" (click)="closeMenu()">Technician</a>
+        <a *ngIf="role === 'admin'" routerLink="/admin/history" (click)="closeMenu()">History</a>
+
+        <!-- Technician Links -->
+        <a *ngIf="role === 'technician'" routerLink="/technician" (click)="closeMenu()">Dashboard</a>
+        <a *ngIf="role === 'technician'" routerLink="/technician/myTasks" (click)="closeMenu()">Technician Tasks</a>
+
+        <!-- Login/Logout Button -->
+        <div class="nav-actions">
+          <a
+            *ngIf="isLoggedIn"
+            (click)="logout()"
+            class="login-button btn btn-danger"
+            style="cursor: pointer"
+          >
+            Logout
+          </a>
+          <a
+            *ngIf="!isLoggedIn"
+            routerLink="/login"
+            (click)="closeMenu()"
+            class="login-button btn"
+          >
+            Login
+          </a>
+        </div>
       </div>
-      <div class="nav-actions">
-        <a routerLink="/login" class="login-button btn" [ngClass]="{ 'btn-danger': isLoggedIn }">
-          {{ isLoggedIn ? 'Logout' : 'Login' }}
-        </a>
-      </div>
+
+      <button class="mobile-nav-toggle" (click)="toggleMenu()">
+        <i class="fa" [ngClass]="menuOpen ? 'fa-times' : 'fa-bars'"></i>
+      </button>
     </nav>
   </div>
 </div>

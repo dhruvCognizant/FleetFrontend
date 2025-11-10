@@ -1,56 +1,118 @@
 <section class="admin-panel">
-  <!-- Header -->
   <div class="header-row">
     <h1>Service History Management</h1>
   </div>
 
-  <!-- Admin Input Form -->
   <form #adminForm="ngForm" (ngSubmit)="addRecord(adminForm)" class="admin-form">
     <div class="form-group">
+      <label>Select VIN</label>
       <select name="vehicleId" [(ngModel)]="newVehicleId" (change)="onVehicleSelect()" required>
-        <option value="">--Select Vehicle ID--</option>
-        <option *ngFor="let id of vehicleIds" [value]="id">{{ id }}</option>
+        <option value="">--Select VIN - ServiceID--</option>
+        <option *ngFor="let entry of dropdownEntries" [value]="entry.serviceId">
+          {{ entry.vin }} - {{ entry.serviceId }}
+          <span *ngIf="!entry.isCompleted && !entry.isAlreadyInHistory"> (In Progress)</span>
+          <span *ngIf="entry.isCompleted && !entry.isAlreadyInHistory"> (Completed)</span>
+          <span *ngIf="entry.isAlreadyInHistory"> (In History)</span>
+        </option>
       </select>
 
-      <input type="date" name="date" [(ngModel)]="newDate" required />
+      <label>Service Date</label>
+      <input
+        type="date"
+        name="date"
+        [(ngModel)]="newDate"
+        placeholder="Service Date"
+        readonly
+        required
+      />
 
-      <select name="paymentStatus" [(ngModel)]="newPaymentStatus" required>
-        <option value="">--Select Payment Status--</option>
-        <option value="Paid">Paid</option>
-        <option value="Unpaid">Unpaid</option>
-      </select>
-
+      <label>Technician Name</label>
       <input
         type="text"
         name="technician"
         [(ngModel)]="newTechnician"
         placeholder="Technician Name"
-        disabled
+        readonly
         required
       />
     </div>
 
     <div class="form-group">
-      <select name="status" [(ngModel)]="newStatus" required>
-        <option value="">--Select Status--</option>
-        <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
-      </select>
+      <label>Status</label>
+      <input
+        type="text"
+        name="status"
+        [(ngModel)]="newStatus"
+        placeholder="Status"
+        readonly
+        required
+      />
 
-      <select disabled name="type" [(ngModel)]="newType" (change)="onTypeChange()" required>
-        <option value="">--Select Service Type--</option>
-        <option *ngFor="let type of typeOptions" [value]="type">{{ type }}</option>
-      </select>
+      <label>Service Type</label>
+      <input
+        type="text"
+        name="type"
+        [(ngModel)]="newType"
+        placeholder="Service Type"
+        readonly
+        required
+      />
 
-      <input type="number" name="cost" [(ngModel)]="newCost" placeholder="Cost (₹)" readonly />
+      <label>Cost (₹)</label>
+      <input type="number" name="cost" [(ngModel)]="newCost" placeholder="Cost (₹)" required />
 
-      <button type="submit">Add Record</button>
+      <button type="submit" [disabled]="adminForm.invalid">Add Record</button>
     </div>
   </form>
 
-  <!-- Records Table -->
-  <div class="record-table">
-    <h2>Service Records</h2>
+  <div class="custom-modal-backdrop" *ngIf="showPaymentModal">
+    <div class="custom-modal">
+      <h2>Select Payment Method</h2>
+      <div class="payment-options">
+        <button (click)="selectPayment('Cash')">💵 Cash</button>
+      </div>
+      <button class="close-btn" (click)="closeModal()">Cancel</button>
+    </div>
+  </div>
 
+  <div class="custom-modal-backdrop" *ngIf="showUpiModal">
+    <div class="custom-modal">
+      <h2>Enter UPI ID</h2>
+      <input
+        type="text"
+        name="upiId"
+        [(ngModel)]="upiId"
+        placeholder="example@upi"
+        class="upi-input"
+      />
+      <div class="payment-options">
+        <button (click)="confirmUpiPayment()">Confirm Payment</button>
+      </div>
+      <button class="close-btn" (click)="closeModal()">Cancel</button>
+    </div>
+  </div>
+
+  <div class="custom-modal-backdrop" *ngIf="showCashModal">
+    <div class="custom-modal">
+      <h2>Cash Payment Details</h2>
+      <label>
+        <input type="checkbox" name="cashInHand" [(ngModel)]="cashInHand" />
+        Cash in hand
+      </label>
+      <select name="cashCollected" [(ngModel)]="cashCollected">
+        <option value="">-- Payment Collected? --</option>
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+      <div class="payment-options">
+        <button (click)="confirmCashPayment()">Confirm Payment</button>
+      </div>
+      <button class="close-btn" (click)="closeModal()">Cancel</button>
+    </div>
+  </div>
+
+  <div class="record-table">
+    <h2>History Records</h2>
     <div class="search-filter">
       <input
         type="text"
@@ -58,11 +120,6 @@
         placeholder="Search by Technician"
         class="search-box"
       />
-
-      <select [(ngModel)]="filterStatus" class="filter-box">
-        <option value="">--Filter by Status--</option>
-        <option *ngFor="let status of statusOptions" [value]="status">{{ status }}</option>
-      </select>
 
       <div class="sort-control">
         <select [(ngModel)]="sortOrder" (change)="sortRecords(sortOrder)" class="sort-box">

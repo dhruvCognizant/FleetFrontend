@@ -24,7 +24,9 @@
   height: 70px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
+
 .nav-links {
   display: flex;
   align-items: center;
@@ -40,10 +42,67 @@
 .main-nav a:hover {
   background-color: #4a6572;
 }
+
 .login-button {
   background-color: #3498db;
   border: none;
 }
 .login-button:hover {
   background-color: #2980b9;
+}
+
+.mobile-nav-toggle {
+  display: none; 
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+}
+.mobile-nav-toggle .fa {
+  vertical-align: middle;
+}
+
+@media (max-width: 992px) { 
+  
+  .nav-links {
+    display: none; 
+    flex-direction: column;
+    position: absolute;
+    top: 70px; 
+    left: 0;
+    width: 100%;
+    background-color: #7ba8a8;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 10px 0;
+    z-index: 100;
+  }
+
+  .nav-links.show-mobile {
+    display: flex;
+  }
+
+  .nav-links a {
+    padding: 12px 20px;
+    width: 100%;
+    text-align: left;
+    box-sizing: border-box;
+    margin-right: 0;
+  }
+
+  .nav-actions {
+    width: 100%;
+    padding: 10px 20px 0;
+    box-sizing: border-box;
+  }
+
+  .login-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .mobile-nav-toggle {
+    display: block;
+  }
 }

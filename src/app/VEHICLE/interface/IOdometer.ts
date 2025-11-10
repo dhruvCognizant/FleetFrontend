@@ -1,6 +1,7 @@
 export interface OdometerReading {
   readingId: string;
-  vehicleId: string;
+  vin: string;
   timestamp: Date;
   mileage: number | null;
+  serviceType: string; 
 }

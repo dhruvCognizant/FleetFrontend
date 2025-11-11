@@ -15,7 +15,7 @@ import { RouterLink } from '@angular/router';
 })
 export class LoginComponent {
   ngOnInit(): void {
-    this.commonService.logout();
+  
   }
 
   showPassword = false;
@@ -29,15 +29,13 @@ export class LoginComponent {
   async onSubmit(form: NgForm) {
     if (form.valid) {
       const { email, password } = form.value;
-      // Prefer API login
       let success = false;
       if ((this.commonService as any).apiLogin) {
         success = await this.commonService.apiLogin(email, password);
       }
 
-      // fallback to in-memory login
       if (!success) {
-        success = this.commonService.login(email, password);
+        success = await this.commonService.apiLogin(email, password);
       }
 
       if (success) {

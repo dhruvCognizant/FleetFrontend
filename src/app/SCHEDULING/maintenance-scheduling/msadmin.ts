@@ -15,19 +15,17 @@ import { VehicleService } from '../../services/vehicle.service';
 export class ServiceSchedulingComponent implements OnInit, DoCheck {
   scheduleForm!: FormGroup;
   availableVehicles: NewVehicle[] = [];
- techniciansForDropdown: {
-  _id: string;
-  name: string;
-  expertise: string;
-  availability: string;
-  isSelectable: boolean;
+  techniciansForDropdown: {
+    _id: string;
+    name: string;
+    expertise: string;
+    availability: string;
+    isSelectable: boolean;
+  }[] = [];
+  scheduledServicesList: any[] = [];
 
-}[] = [];
-scheduledServicesList: any[] = [];
-
-technicians: any[] = [];
-techniciansAvailableToday: any[] = [];
-
+  technicians: any[] = [];
+  techniciansAvailableToday: any[] = [];
 
   nextServiceKmDisplay: string = '';
   nextServiceDateDisplay: string = '';
@@ -37,7 +35,11 @@ techniciansAvailableToday: any[] = [];
   };
 
   minDate!: string;
-  constructor(private fb: FormBuilder, private commonService: CommonService , private vehicleService:VehicleService) {}
+  constructor(
+    private fb: FormBuilder,
+    private commonService: CommonService,
+    private vehicleService: VehicleService
+  ) {}
 
   ngOnInit(): void {
     const today = new Date();
@@ -50,19 +52,17 @@ techniciansAvailableToday: any[] = [];
     });
 
     this.refreshDropdowns();
-  this.loadScheduledServices();
-    // This block listens for changes in the technician dropdown
+    this.loadScheduledServices();
     this.scheduleForm.get('technician')?.valueChanges.subscribe((technicianName) => {
-  const selectedTechnician = this.techniciansForDropdown.find(
-    (tech) => tech.name === technicianName
-  );
-  const currentServiceType = this.scheduleForm.get('serviceType')?.value;
+      const selectedTechnician = this.techniciansForDropdown.find(
+        (tech) => tech.name === technicianName
+      );
+      const currentServiceType = this.scheduleForm.get('serviceType')?.value;
 
-  if (!currentServiceType && selectedTechnician) {
-    this.scheduleForm.patchValue({ serviceType: selectedTechnician.expertise });
-  }
-});
-
+      if (!currentServiceType && selectedTechnician) {
+        this.scheduleForm.patchValue({ serviceType: selectedTechnician.expertise });
+      }
+    });
   }
 
   ngDoCheck(): void {
@@ -73,161 +73,150 @@ techniciansAvailableToday: any[] = [];
     }
   }
 
-  // A simple getter to calculate the number of technicians available today for the summary card
-get availableTechniciansCount(): number {
-  return this.techniciansAvailableToday.length;
-}
+  get availableTechniciansCount(): number {
+    return this.techniciansAvailableToday.length;
+  }
 
-
-
-
-get scheduledServices(): any[] {
-  return this.scheduledServicesList;
-}
+  get scheduledServices(): any[] {
+    return this.scheduledServicesList;
+  }
 
   loadScheduledServices(): void {
-  this.commonService.getScheduledServices().subscribe({
-    next: (services: any[]) => {
-      this.scheduledServicesList = services;
-    },
-    error: (err) => {
-      console.error('Failed to load scheduled services:', err);
+    this.commonService.getScheduledServices().subscribe({
+      next: (services: any[]) => {
+        this.scheduledServicesList = services;
+      },
+      error: (err) => {
+        console.error('Failed to load scheduled services:', err);
+      },
+    });
+  }
+
+  refreshDropdowns(): void {
+    const token = sessionStorage.getItem('token');
+    if (!token) {
+      console.error('No auth token present');
+      return;
     }
-  });
-}
 
+    this.commonService.fetchUnassignedServices().subscribe({
+      next: (response: any) => {
+        const services = response.unassigned_services || [];
+        this.availableVehicles = services.map((s: any) => ({
+          type: s.vehicleType || '',
+          make: s.vehicleMake || '',
+          model: s.vehicleModel || '',
+          year: s.vehicleYear || null,
+          VIN: s.vehicleVIN,
+          lastServiceDate: s.lastServiceDate
+            ? this.commonService.parseBackendDateToISO(s.lastServiceDate)
+            : undefined,
+          serviceType: s.serviceType || '',
+          nextServiceMileage: null,
+          hasOpenUnpaidService: false,
+        }));
+      },
+      error: (err) => {
+        console.error('Failed to load unassigned services:', err);
+      },
+    });
 
-refreshDropdowns(): void {
-  const token = sessionStorage.getItem('token');
-  if (!token) {
-    console.error('No auth token present');
-    return;
+    this.commonService.fetchAvailableTechniciansForCard().subscribe({
+      next: (res: any) => {
+        this.techniciansAvailableToday = res.technician;
+      },
+      error: (err) => {
+        console.error('Failed to load available technicians for card:', err);
+        this.techniciansAvailableToday = [];
+      },
+    });
   }
-
-  // Fetch unassigned services
-  this.commonService.fetchUnassignedServices().subscribe({
-    next: (response: any) => {
-      const services = response.unassigned_services || [];
-    this.availableVehicles = services.map((s: any) => ({
-  type: s.vehicleType || '',
-  make: s.vehicleMake || '',
-  model: s.vehicleModel || '',
-  year: s.vehicleYear || null,
-  VIN: s.vehicleVIN,
-  lastServiceDate: s.lastServiceDate
-    ? this.commonService.parseBackendDateToISO(s.lastServiceDate)
-    : undefined,
-  serviceType: s.serviceType || '',
-  nextServiceMileage: null,
-  hasOpenUnpaidService: false,
-}));
-
-    },
-    error: (err) => {
-      console.error('Failed to load unassigned services:', err);
+  submitService(): void {
+    if (this.scheduleForm.invalid) {
+      this.scheduleForm.markAllAsTouched();
+      return;
     }
-  });
 
-this.commonService.fetchAvailableTechniciansForCard().subscribe({
-  next: (res: any) => {
-    this.techniciansAvailableToday = res.technician;
-  },
-  error: (err) => {
-    console.error('Failed to load available technicians for card:', err);
-    this.techniciansAvailableToday = [];
-  }
-});
+    const formValue = this.scheduleForm.getRawValue();
+    const serviceType = formValue.serviceType;
+    const technicianName = formValue.technician;
 
-}
-submitService(): void {
-  if (this.scheduleForm.invalid) {
-    this.scheduleForm.markAllAsTouched();
-    return;
-  }
-
-  const formValue = this.scheduleForm.getRawValue();
-  const serviceType = formValue.serviceType;
-  const technicianName = formValue.technician;
-
-  if (!serviceType || !technicianName) {
-    alert('Missing service type or technician.');
-    return;
-  }
-
-  const technician = this.techniciansForDropdown.find(t => t.name === technicianName);
-  if (!technician || !technician._id) {
-    alert('Selected technician not found or missing ID.');
-    return;
-  }
-
-  const payload = {
-    vehicleVIN: formValue.vin,
-    serviceType,
-    technicianId: technician._id,
-    dueServiceDate: new Date(formValue.dueDate).toISOString()
-  };
-
-  this.commonService.scheduleService(payload).subscribe({
-    next: (res) => {
-  alert(res.message || 'Service scheduled successfully');
-
-  this.refreshDropdowns();
-
-  const vin = formValue.vin;
-  if (vin) this.vehicleChanged(vin);
-
-  this.scheduleForm.reset();
-  this.nextServiceKmDisplay = '';
-  this.nextServiceDateDisplay = '';
-
-  this.loadScheduledServices(); 
-},
-
-    error: (err) => {
-      alert(err.error?.error || 'Failed to schedule service');
+    if (!serviceType || !technicianName) {
+      alert('Missing service type or technician.');
+      return;
     }
-    
-  });
-  this.loadScheduledServices();
 
-}
-vehicleChanged(vin: string): void {
-  const vehicle = this.availableVehicles.find((v) => v.VIN === vin);
-  if (!vehicle) return;
+    const technician = this.techniciansForDropdown.find((t) => t.name === technicianName);
+    if (!technician || !technician._id) {
+      alert('Selected technician not found or missing ID.');
+      return;
+    }
 
-  const serviceType = vehicle.serviceType || '';
-  this.scheduleForm.patchValue({ serviceType });
+    const payload = {
+      vehicleVIN: formValue.vin,
+      serviceType,
+      technicianId: technician._id,
+      dueServiceDate: new Date(formValue.dueDate).toISOString(),
+    };
 
-  const freq = this.serviceFrequency[vehicle.type];
-  if (!freq) return;
+    this.commonService.scheduleService(payload).subscribe({
+      next: (res) => {
+        alert(res.message || 'Service scheduled successfully');
 
-  const latestReading = this.vehicleService
-    .getOdometerReadings()
-    .filter((r) => r.vin === vin)
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
+        this.refreshDropdowns();
 
-  const lastMileage = latestReading?.mileage ?? 0;
-  const nextMileage = lastMileage + freq.km;
-  this.nextServiceKmDisplay = nextMileage.toString();
+        const vin = formValue.vin;
+        if (vin) this.vehicleChanged(vin);
 
-const lastServiceDate = new Date(vehicle.lastServiceDate ?? '');
-  const nextDate = new Date(lastServiceDate);
-  nextDate.setDate(nextDate.getDate() + freq.days);
-  this.nextServiceDateDisplay = nextDate.toISOString().split('T')[0];
+        this.scheduleForm.reset();
+        this.nextServiceKmDisplay = '';
+        this.nextServiceDateDisplay = '';
 
-this.commonService.fetchAvailableTechnicians(serviceType).subscribe({
-  next: (res: any) => {
-    this.techniciansForDropdown = res.technician.map((tech: any) => ({
-      name: tech.name,
-  _id: tech._id,
-  isSelectable: true
-    }));
-  },
-  error: (err: any) => {
-    console.error('Failed to load technicians:', err);
-    this.techniciansForDropdown = [];
+        this.loadScheduledServices();
+      },
+
+      error: (err) => {
+        alert(err.error?.error || 'Failed to schedule service');
+      },
+    });
+    this.loadScheduledServices();
   }
-});
+  vehicleChanged(vin: string): void {
+    const vehicle = this.availableVehicles.find((v) => v.VIN === vin);
+    if (!vehicle) return;
 
-}
+    const serviceType = vehicle.serviceType || '';
+    this.scheduleForm.patchValue({ serviceType });
+
+    const freq = this.serviceFrequency[vehicle.type];
+    if (!freq) return;
+
+    const latestReading = this.vehicleService
+      .getOdometerReadings()
+      .filter((r) => r.vin === vin)
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
+
+    const lastMileage = latestReading?.mileage ?? 0;
+    const nextMileage = lastMileage + freq.km;
+    this.nextServiceKmDisplay = nextMileage.toString();
+
+    const lastServiceDate = new Date(vehicle.lastServiceDate ?? '');
+    const nextDate = new Date(lastServiceDate);
+    nextDate.setDate(nextDate.getDate() + freq.days);
+    this.nextServiceDateDisplay = nextDate.toISOString().split('T')[0];
+
+    this.commonService.fetchAvailableTechnicians(serviceType).subscribe({
+      next: (res: any) => {
+        this.techniciansForDropdown = res.technician.map((tech: any) => ({
+          name: tech.name,
+          _id: tech._id,
+          isSelectable: true,
+        }));
+      },
+      error: (err: any) => {
+        console.error('Failed to load technicians:', err);
+        this.techniciansForDropdown = [];
+      },
+    });
+  }
 }

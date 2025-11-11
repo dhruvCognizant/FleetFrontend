@@ -5,19 +5,16 @@ import { FormsModule } from '@angular/forms';
 import { VehicleService } from '../../services/vehicle.service';
 import { NewVehicle } from '../interface/IVehicle';
 import { OdometerReading } from '../interface/IOdometer';
-import { CommonService } from '../../services/common-service';
-import { Subscription } from 'rxjs';
 declare var bootstrap: any;
 
 @Component({
   selector: 'app-vehicle-list',
   imports: [CommonModule, SearchPipe, FormsModule],
   templateUrl: './vehicle-list.html',
-  styleUrls: ['./vehicle-list.css'],   // ✅ fixed
+  styleUrls: ['./vehicle-list.css'],
 })
 export class VehicleList implements OnInit {
-
-  constructor(private vehicleService: VehicleService, private commonService: CommonService) {}
+  constructor(private vehicleService: VehicleService) {}
 
   searchQuery = '';
   @Input() vehicles: NewVehicle[] = [];
@@ -27,7 +24,6 @@ export class VehicleList implements OnInit {
   mileageHistory: OdometerReading[] = [];
 
   ngOnInit(): void {
-    // If parent didn't pass vehicles, try fetching from backend (requires token)
     if (!this.vehicles || this.vehicles.length === 0) {
       this.vehicleService.fetchVehiclesApi().subscribe({
         next: (fetched) => {
@@ -37,7 +33,7 @@ export class VehicleList implements OnInit {
         },
         error: (err) => {
           console.warn('Unable to fetch vehicles on init:', err);
-        }
+        },
       });
     }
   }
@@ -50,7 +46,7 @@ export class VehicleList implements OnInit {
       this.vehicleService.fetchOdometerReadings(vin).subscribe({
         next: (apiReadings) => {
           if (apiReadings && apiReadings.length > 0) {
-            this.mileageHistory = apiReadings.map(r => ({ ...r }));
+            this.mileageHistory = apiReadings.map((r) => ({ ...r }));
           } else {
             this.mileageHistory = this.vehicleService.getMileageHistory(vin);
           }
@@ -64,7 +60,7 @@ export class VehicleList implements OnInit {
 
           const modalInstance = new bootstrap.Modal(this.historyModal.nativeElement);
           modalInstance.show();
-        }
+        },
       });
     }
   }

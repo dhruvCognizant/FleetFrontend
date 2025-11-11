@@ -75,7 +75,6 @@
   background-color: #aaa;
   cursor: not-allowed;
 }
-/* Container to add horizontal padding for service dropdown */
 .service-dropdown-wrapper {
   padding: 0 20px;
 }

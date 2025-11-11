@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TechnicianService } from '../../../services/technician.service';
-import { CommonService } from '../../../services/common-service';
 import { ServiceAssignment } from '../../../models/assignment.model';
 import { FormatStatusPipe } from '../../../pipes/format-status-pipe';
 import { Technician } from '../../../models/technician.model';
@@ -17,10 +16,7 @@ export class TechnicianTasksComponent implements OnInit {
   myAssignments: ServiceAssignment[] = [];
   allTechnicians: Technician[] = [];
 
-  constructor(
-    private techService: TechnicianService,
-    private commonService: CommonService
-  ) {}
+  constructor(private techService: TechnicianService) {}
 
   ngOnInit(): void {
     this.loadAssignments();
@@ -34,7 +30,7 @@ export class TechnicianTasksComponent implements OnInit {
       },
       error: (err) => {
         console.error('Failed to load technician assignments:', err);
-      }
+      },
     });
   }
 
@@ -46,7 +42,7 @@ export class TechnicianTasksComponent implements OnInit {
       },
       error: (err) => {
         alert(`Error updating status: ${err.message}`);
-      }
+      },
     });
   }
   getTechnicianName(id: string): string {

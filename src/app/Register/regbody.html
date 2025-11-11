@@ -48,7 +48,7 @@
           <input
             type="checkbox"
             [value]="skill"
-            (change)="updateSelection(skill, 'skill', $event.target.checked)"
+            (change)="updateSelection(skill, 'skills', $event.target.checked)"
           />
           {{ skill }}
         </label>
@@ -56,7 +56,7 @@
       <input
         type="text"
         class="form-control"
-        [value]="formData.skill.join(', ')"
+        [value]="formData.skills.join(', ')"
         readonly
         placeholder="Selected skills"
       />
@@ -124,7 +124,7 @@
         </button>
       </div>
       <div *ngIf="password.invalid && password.touched" class="error">
-        Password must be at least 8 characters long.
+        Password must be at least 6 characters long.
       </div>
     </div>
 

@@ -75,23 +75,6 @@
     </div>
   </div>
 
-  <div class="custom-modal-backdrop" *ngIf="showUpiModal">
-    <div class="custom-modal">
-      <h2>Enter UPI ID</h2>
-      <input
-        type="text"
-        name="upiId"
-        [(ngModel)]="upiId"
-        placeholder="example@upi"
-        class="upi-input"
-      />
-      <div class="payment-options">
-        <button (click)="confirmUpiPayment()">Confirm Payment</button>
-      </div>
-      <button class="close-btn" (click)="closeModal()">Cancel</button>
-    </div>
-  </div>
-
   <div class="custom-modal-backdrop" *ngIf="showCashModal">
     <div class="custom-modal">
       <h2>Cash Payment Details</h2>

@@ -1,4 +1,5 @@
 <div class="container mt-4">
+  
   <!-- Heading Section -->
   <div class="section-box">
     <h2>Service Scheduling</h2>
@@ -6,6 +7,7 @@
       Schedule maintenance services by connecting vehicles with available technicians.
     </p>
   </div>
+
   <!-- Summary Cards Section -->
   <div class="section-box full-width">
     <div class="row card-row">
@@ -36,6 +38,7 @@
       </div>
     </div>
   </div>
+
   <!-- Schedule Form Section -->
   <div class="section-box narrow-center">
     <h4>Schedule New Service</h4>
@@ -58,8 +61,6 @@
           <label>Assign Technician <span class="required-asterisk">*</span></label>
           <select class="form-select" formControlName="technician">
             <option [ngValue]="null" disabled>Select an available technician</option>
-            <!-- Each option now shows the technician's availability day -->
-            <!-- The [disabled] property makes the option unselectable if isSelectable is false -->
             <option
               *ngFor="let t of techniciansForDropdown"
               [value]="t.name"
@@ -71,7 +72,6 @@
         </div>
         <div class="col-md-3 mb-3">
           <label>Service Type <span class="required-asterisk">*</span></label>
-          <!-- This has been changed from a dropdown to a read-only input -->
           <input
             type="text"
             class="form-control"
@@ -100,6 +100,7 @@
       </button>
     </form>
   </div>
+
   <!-- Scheduled Services List Section -->
   <div class="section-box full-width">
     <h4>Services</h4>

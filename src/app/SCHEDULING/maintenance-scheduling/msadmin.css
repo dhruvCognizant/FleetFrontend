@@ -206,6 +206,15 @@ button[type='submit']:disabled {
   transition: background-color 0.3s ease;
 }
 
+.section-box.full-width {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.section-box.full-width table {
+  min-width: 600px;
+}
+
 @media (max-width: 768px) {
   .card-row {
     flex-direction: column;
@@ -222,5 +231,26 @@ button[type='submit']:disabled {
 
   form .row {
     grid-template-columns: 1fr;
+  }
+
+  .section-box.full-width table {
+    font-size: 0.9rem;
+  }
+
+  .section-box.full-width th,
+  .section-box.full-width td {
+    padding: 0.6rem;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .section-box.full-width table {
+    font-size: 0.8rem;
+  }
+
+  .section-box.full-width th,
+  .section-box.full-width td {
+    padding: 0.5rem;
   }
 }

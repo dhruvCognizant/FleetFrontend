@@ -5,12 +5,11 @@ import { HeaderComponent } from './header/header';
 import { FooterComponent } from './footer/footer';
 import { Router, RouterOutlet } from '@angular/router';
 import { LandingHeader } from './LandingPage/landing-header/landing-header';
-import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, FooterComponent, RouterOutlet, LandingHeader, HttpClientModule],
+  imports: [CommonModule, HeaderComponent, FooterComponent, RouterOutlet, LandingHeader],
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
 })

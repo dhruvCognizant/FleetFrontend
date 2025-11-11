@@ -2,52 +2,43 @@
   <h2>Manage All Assigned Tasks</h2>
   <div *ngIf="myAssignments.length > 0; else noTasks" class="table-container">
     <table *ngIf="myAssignments.length > 0; else noTasks">
-  <thead>
-    <tr>
-      <th>Assignment ID</th>
-      <th>Vehicle VIN</th>
-      <th>Service Type</th>
-      <th>Status</th>
-      <th>Due Date</th>
-      <th>Action</th>
+      <thead>
+        <tr>
+          <th>Service ID</th>
+          <th>Vehicle VIN</th>
+          <th>Service Type</th>
+          <th>Status</th>
+          <th>Due Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let assignment of myAssignments">
+          <td>{{ assignment._id }}</td>
+          <td>{{ assignment.vehicleVIN }}</td>
+          <td>{{ assignment.serviceType }}</td>
+          <td>{{ assignment.status | formatStatus }}</td>
+          <td>{{ assignment.dueServiceDate | date : 'mediumDate' }}</td>
+          <td>
+            <button
+              *ngIf="assignment.status === 'Assigned'"
+              (click)="updateStatus(assignment._id, 'Completed')"
+              class="btn btn-sm btn-success"
+            >
+              Mark as Completed
+            </button>
 
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let assignment of myAssignments">
-      <td>{{ assignment._id }}</td>
-      <td>{{ assignment.vehicleVIN }}</td>
-      <td>{{ assignment.serviceType }}</td>
-      <td>{{ assignment.status | formatStatus }}</td>
-      <td>{{ assignment.dueServiceDate | date: 'mediumDate' }}</td>
-      <td>
-  <button
-    *ngIf="assignment.status === 'Assigned'"
-    (click)="updateStatus(assignment._id, 'Completed')"
-    class="btn btn-sm btn-success"
-  >
-    Mark as Completed
-  </button>
-
-  <span *ngIf="assignment.status === 'Completed'" class="badge bg-success">
-    Completed
-  </span>
-</td>
-
-
-    </tr>
-  </tbody>
-</table>
-
-<ng-template #noTasks>
-  <p>No assignments found for this technician.</p>
-</ng-template>
-
+            <span *ngIf="assignment.status === 'Completed'" class="badge bg-success">
+              Completed
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-  <!-- directive that can be condiionally rendered -->
   <ng-template #noTasks>
     <div class="no-tasks-message">
-      <p *ngIf="myAssignments.length === 0">There are no tasks assigned at the moment.</p>
+      <p>There are no tasks assigned at the moment.</p>
     </div>
   </ng-template>
 </div>

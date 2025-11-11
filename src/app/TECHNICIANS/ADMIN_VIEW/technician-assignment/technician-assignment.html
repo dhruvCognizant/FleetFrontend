@@ -32,9 +32,8 @@
         >
           <option [ngValue]="undefined" disabled>Select a service</option>
           <option *ngFor="let service of unassignedServicesList" [ngValue]="service._id">
-  {{ service._id }} - {{ service.serviceType }}
-</option>
-
+            {{ service._id }} - {{ service.serviceType }}
+          </option>
         </select>
         <div *ngIf="serviceId.invalid && serviceId.touched" class="error-text">
           Service ID is required.
@@ -71,7 +70,6 @@
     <table>
       <thead>
         <tr>
-          
           <th>Service ID</th>
           <th>Vehicle ID</th>
           <th>Technician Name</th>
@@ -80,14 +78,12 @@
       </thead>
       <tbody>
         <tr *ngFor="let assignment of assignments">
-  <td>{{ assignment._id }}</td>
-  <td>{{ assignment.vehicleVIN }}</td>
-  
-  <td>{{ assignment.technicianName}}</td>
-  <td>{{ assignment.status | formatStatus }}</td>
-</tr>
+          <td>{{ assignment._id }}</td>
+          <td>{{ assignment.vehicleVIN }}</td>
 
-
+          <td>{{ assignment.technicianName }}</td>
+          <td>{{ assignment.status | formatStatus }}</td>
+        </tr>
         <tr *ngIf="assignments.length === 0">
           <td colspan="5">No assignments found.</td>
         </tr>

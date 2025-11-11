@@ -4,7 +4,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CommonService } from '../../services/common-service';
 import { TechnicianService } from '../../services/technician.service';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environment/environment';
 
 @Component({
   selector: 'app-user-admin',
@@ -28,20 +29,19 @@ export class UserAdmin implements OnInit {
   newCost: number = 0;
 
   showPaymentModal: boolean = false;
-  showUpiModal: boolean = false;
   showCashModal: boolean = false;
 
-  upiId: string = '';
   cashInHand: boolean = false;
   cashCollected: string = '';
   pendingRecord: any = null;
 
-  statusOptions: string[] = ['Completed', 'In Progress', 'Pending'];
+
   services = [
     { name: 'Oil Change', cost: 12000 },
     { name: 'Brake Check', cost: 6000 },
     { name: 'Battery Test', cost: 15000 },
   ];
+  private API_BASE = environment.apiBaseUrl;
 
   records: any[] = [];
   searchTerm: string = '';
@@ -57,8 +57,6 @@ export class UserAdmin implements OnInit {
   async refreshDropdownData(): Promise<void> {
     try {
       const scheduled = await this.commonService.getScheduledServicesApi();
-
-      // Filter only completed services
       const completedServices = (scheduled || []).filter(
         (service: any) =>
           service.status === 'Completed' && service.payment?.paymentStatus === 'Unpaid'
@@ -71,7 +69,6 @@ export class UserAdmin implements OnInit {
       this.dropdownEntries = completedServices
         .map((service: any) => {
           const isAlreadyInHistory = completedHistoryIds.includes(service._id);
-
           return {
             serviceId: service._id,
             vin: service.vehicleVIN,
@@ -92,7 +89,6 @@ export class UserAdmin implements OnInit {
   addRecord(form: NgForm) {
     if (form.valid) {
       const selectedEntry = this.dropdownEntries.find((e) => e.serviceId === this.newVehicleId);
-
       if (!selectedEntry) {
         alert('Error: Could not find selected service.');
         return;
@@ -134,10 +130,7 @@ export class UserAdmin implements OnInit {
 
   selectPayment(method: string) {
     if (this.pendingRecord) {
-      if (method === 'UPI') {
-        this.showPaymentModal = false;
-        this.showUpiModal = true;
-      } else if (method === 'Cash') {
+      if (method === 'Cash') {
         this.showPaymentModal = false;
         this.showCashModal = true;
       } else {
@@ -152,25 +145,10 @@ export class UserAdmin implements OnInit {
     }
   }
 
-  confirmUpiPayment() {
-    if (this.pendingRecord && this.upiId.trim()) {
-      this.pendingRecord.paymentStatus = 'Paid';
-      this.pendingRecord.paymentMethod = `UPI (${this.upiId})`;
-      this.records.push(this.pendingRecord);
-      this.commonService.addCompletedRecord(this.pendingRecord);
-      this.commonService.markTechnicianAvailable(this.pendingRecord.technician);
-      this.pendingRecord = null;
-      this.upiId = '';
-      this.showUpiModal = false;
-    }
-  }
-
   confirmCashPayment() {
     if (this.pendingRecord && this.cashCollected) {
       this.pendingRecord.paymentStatus = this.cashCollected === 'Yes' ? 'Paid' : 'Pending';
-      this.pendingRecord.paymentMethod = this.cashInHand
-        ? 'Cash (in hand)'
-        : 'Cash (not in hand / UPI)';
+      this.pendingRecord.paymentMethod = this.cashInHand ? 'Cash (in hand)' : 'Cash (not in hand)';
       this.records.push(this.pendingRecord);
       this.submitPaymentToBackend(this.pendingRecord.serviceId, this.pendingRecord.cost);
 
@@ -186,7 +164,6 @@ export class UserAdmin implements OnInit {
   closeModal() {
     this.pendingRecord = null;
     this.showPaymentModal = false;
-    this.showUpiModal = false;
     this.showCashModal = false;
   }
 
@@ -224,12 +201,12 @@ export class UserAdmin implements OnInit {
 
   get filteredRecords(): any[] {
     const term = this.searchTerm.trim().toLowerCase();
-    const status = this.filterStatus.trim().toLowerCase();
+    
 
     return this.records.filter(
       (r) =>
-        (!term || r.technician.toLowerCase().includes(term)) &&
-        (!status || r.status.toLowerCase() === status)
+        (!term || r.technician.toLowerCase().includes(term))
+       
     );
   }
 
@@ -238,19 +215,16 @@ export class UserAdmin implements OnInit {
   }
 
   submitPaymentToBackend(serviceId: string, cost: number): void {
-    const token = sessionStorage.getItem('token');
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-
     const payload = {
       serviceId,
       paymentStatus: 'Paid',
       cost,
     };
 
-    this.http.post('http://localhost:5000/api/history/addService', payload, { headers }).subscribe({
+    this.http.post(`${this.API_BASE}/api/history/addService`, payload).subscribe({
       next: (res: any) => {
         alert(`Payment recorded. History ID: ${res.historyId}`);
-        this.refreshDropdownData(); // Refresh dropdown to disable completed entries
+        this.refreshDropdownData();
       },
       error: (err) => {
         alert(`Failed to record payment: ${err.error?.message || err.message}`);
@@ -271,7 +245,7 @@ export class UserAdmin implements OnInit {
         cost: h.cost,
         technician: h.technicianName || '—',
         paymentStatus: h.paymentStatus,
-        paymentMethod: '—', // optional: extend schema if needed
+        paymentMethod: '—',
       }));
     } catch (err) {
       console.error('Failed to load histories:', err);

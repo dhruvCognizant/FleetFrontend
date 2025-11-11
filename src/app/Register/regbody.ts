@@ -17,7 +17,7 @@ export class Regbody {
   formData = {
     firstName: '',
     lastName: '',
-    skill: [] as string[],
+    skills: [] as string[],
     availability: [] as string[],
     email: '',
     password: '',
@@ -38,7 +38,7 @@ export class Regbody {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
-  updateSelection(value: string, field: 'skill' | 'availability', isChecked: boolean): void {
+  updateSelection(value: string, field: 'skills' | 'availability', isChecked: boolean): void {
     const list = this.formData[field];
     if (isChecked) {
       if (!list.includes(value)) list.push(value);
@@ -49,64 +49,57 @@ export class Regbody {
   }
 
   async onSubmit(form: NgForm) {
-    if (form.invalid) {
-      alert('Please correct the errors in the form.');
+    const { firstName, lastName, email, password, confirmPassword, skills, availability } =
+      this.formData;
+
+    if (
+      !firstName.trim() ||
+      !lastName.trim() ||
+      !email.trim() ||
+      !password ||
+      !confirmPassword ||
+      skills.length === 0 ||
+      availability.length === 0
+    ) {
+      alert('All fields are required, including skills and availability.');
       return;
     }
 
-    if (this.formData.password !== this.formData.confirmPassword) {
-      alert('Passwords do not match. Please try again.');
+    const emailPattern = /^[^\s@]+@fleet\.com$/;
+    if (!emailPattern.test(email)) {
+      alert('Email must end with @fleet.com');
       return;
     }
 
-    const technicianId = this.commonService.generateTechnicianId();
-    const fullName = `${this.formData.firstName} ${this.formData.lastName}`;
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{6,}$/;
+    if (!passwordPattern.test(password)) {
+      alert(
+        'Password must be at least 8 characters and include one uppercase and one lowercase letter.'
+      );
+      return;
+    }
 
-    // Prepare payloads for backend registration
+    if (password !== confirmPassword) {
+      alert('Passwords do not match.');
+      return;
+    }
+
     const techPayload = {
-      firstName: this.formData.firstName,
-      lastName: this.formData.lastName,
-      skill: this.formData.skill.join(', '),
-      availability: this.formData.availability.join(', '),
-      email: this.formData.email,
-      password: this.formData.password,
+      firstName,
+      lastName,
+      skills,
+      availability: availability.map((d) => d.toLowerCase()),
+      email,
+      password,
     };
 
     try {
-      // Try backend API registration first
-      if ((this.commonService as any).registerTechnicianApi) {
-        await this.commonService.registerTechnicianApi(techPayload);
-      } else {
-        // fallback to local additions
-        this.commonService.RegisterTechnicians({
-          technicianId: technicianId,
-          name: fullName,
-          expertise: this.formData.skill.join(', '),
-          availability: this.formData.availability.join(', '),
-        });
-
-        this.commonService.addTechnician({
-          email: this.formData.email,
-          password: this.formData.password,
-        });
-      }
+      await this.commonService.registerTechnicianApi(techPayload);
+      alert('Technician registered successfully!');
+      this.router.navigate(['/login']);
     } catch (err) {
-      // If API fails, still write locally
-      console.error('Register API failed, falling back to local storage', err);
-      this.commonService.RegisterTechnicians({
-        technicianId: technicianId,
-        name: fullName,
-        expertise: this.formData.skill.join(', '),
-        availability: this.formData.availability.join(', '),
-      });
-
-      this.commonService.addTechnician({
-        email: this.formData.email,
-        password: this.formData.password,
-      });
+      console.error('Register API failed:', err);
+      alert('Registration failed. Please try again.');
     }
-
-    alert(`Technician registered successfully! Your Technician ID is: ${technicianId}`);
-    this.router.navigate(['/login']);
   }
 }

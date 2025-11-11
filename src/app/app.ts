@@ -18,7 +18,7 @@ export class AppComponent {
 
   constructor(public commonService: CommonService, private router: Router) {}
 
-  get role(): 'admin' | 'technician' | 'user' | null {
+  get role(): 'admin' | 'technician' | null {
     return this.commonService.getRole();
   }
 

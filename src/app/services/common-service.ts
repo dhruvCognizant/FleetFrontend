@@ -173,40 +173,6 @@ export class CommonService {
     );
   }
 
-  formatToBackendDate(dateStr: string): string {
-    if (!dateStr) return '';
-    const parts = String(dateStr)
-      .split('-')
-      .map((p) => p.trim());
-    if (parts.length === 3 && parts[0].length === 2 && parts[2].length === 4) {
-      return `${parts[0]}-${parts[1]}-${parts[2]}`;
-    }
-    if (parts.length === 3 && parts[0].length === 4) {
-      return `${parts[2]}-${parts[1]}-${parts[0]}`;
-    }
-    return dateStr;
-  }
-
-  parseBackendDateToISO(dateStr: string): string {
-    if (!dateStr) return '';
-    const s = String(dateStr).trim();
-    if (s.includes('T')) {
-      const d = new Date(s);
-      if (!isNaN(d.getTime())) {
-        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
-          d.getDate()
-        ).padStart(2, '0')}`;
-      }
-    }
-    const parts = s.split('-').map((p) => p.trim());
-    if (parts.length !== 3) return s;
-    const [d, m, y] = parts;
-    if (y.length === 4) return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
-    if (parts[0].length === 4)
-      return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
-    return s;
-  }
-
   fetchUnassignedServices(): Observable<any[]> {
     return this.http.get<any[]>(`${this.API_BASE}/api/scheduling/unassigned`).pipe(
       catchError((err) => {

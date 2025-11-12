@@ -24,7 +24,6 @@ export class Content implements OnInit {
   @ViewChild('odometerModal') odometerModal!: ElementRef;
   @ViewChild(ServiceSchedulingComponent) serviceScheduler!: ServiceSchedulingComponent;
 
-  currentUserRole: 'admin' | 'user' = 'user';
   registrationYears: number[] = [];
   today!: string;
 
@@ -117,63 +116,33 @@ export class Content implements OnInit {
     return type && make && this.vehicleData[type]?.[make] ? this.vehicleData[type][make] : [];
   }
 
-addVehicle(form: NgForm): void {
-  if (!form.valid) return;
+  addVehicle(form: NgForm): void {
+    if (!form.valid) return;
 
-  const newVeh = { ...this.newVehicle };
+    const newVeh = { ...this.newVehicle };
 
-  if (!newVeh.lastServiceDate) {
-    newVeh.lastServiceDate = this.formatDate(new Date()); 
+    if (!newVeh.lastServiceDate) {
+      newVeh.lastServiceDate = this.formatDate(new Date()); 
+    }
+
+    if (this.commonService.getRole() === 'admin') {
+      this.vehicleService.addVehicleApi(newVeh).subscribe({
+        next: () => this.vehicleService.fetchVehiclesApi().subscribe(),
+        error: (err) => {
+          const msg = err?.error?.message || err?.message || 'Failed to add vehicle';
+          alert(msg);
+        },
+      });
+    } else {
+      this.vehicleService.addVehicle(newVeh);
+    }
+
+    form.resetForm();
+    this.newVehicle = { type: '', make: '', model: '', year: null, VIN: '', lastServiceDate: '' };
+
+    const modalInstance = bootstrap.Modal.getInstance(this.vehicleModal.nativeElement);
+    if (modalInstance) modalInstance.hide();
   }
-
-  newVeh.lastServiceDate = this.commonService.formatToBackendDate(newVeh.lastServiceDate);
-
-  const parsed = new Date(this.commonService.parseBackendDateToISO(newVeh.lastServiceDate));
-  if (isNaN(parsed.getTime())) {
-    alert("Please select a valid last service date.");
-    return;
-  }
-
-  const freq = this.serviceFrequency[newVeh.type];
-  if (freq) {
-    (newVeh as any).serviceKm = freq.km;
-    (newVeh as any).serviceDays = freq.days;
-  }
-
-  if (this.commonService.getRole() === 'admin') {
-    this.vehicleService.addVehicleApi(newVeh).subscribe({
-      next: () => {
-        this.vehicleService.fetchVehiclesApi().subscribe({
-          error: (err) => console.warn('Could not refresh vehicles after add:', err),
-        });
-      },
-      error: (err) => {
-        console.error('Add vehicle API failed', err);
-        const msg = err?.error?.message || err?.message || 'Failed to add vehicle';
-        alert(msg);
-      },
-    });
-  } else {
-    this.vehicleService.addVehicle(newVeh);
-  }
-
-  if (this.serviceScheduler) {
-    this.serviceScheduler.refreshDropdowns();
-  }
-
-  form.resetForm();
-  this.newVehicle = {
-    type: '',
-    make: '',
-    model: '',
-    year: null,
-    VIN: '',
-    lastServiceDate: '',
-  };
-
-  const modalInstance = bootstrap.Modal.getInstance(this.vehicleModal.nativeElement);
-  if (modalInstance) modalInstance.hide();
-}
 
   submitOdometer(form: NgForm): void {
     if (!form.valid || !this.odometer.vin) return;
@@ -221,8 +190,7 @@ addVehicle(form: NgForm): void {
       next: (resp) => {
         const created = resp.reading || {};
         const readingObj: OdometerReading = {
-          readingId:
-            created.readingId || created.readingID || this.vehicleService.generateReadingId(),
+          readingId: created.readingId,
           vin: this.odometer.vin,
           timestamp: created.date ? new Date(created.date) : new Date(),
           mileage: typeof created.mileage === 'number' ? created.mileage : mileageValue,

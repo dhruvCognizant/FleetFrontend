@@ -35,10 +35,6 @@ export class VehicleService {
     return this.registeredVehicles;
   }
 
-  private pad(num: number): string {
-    return String(num).padStart(3, '0');
-  }
-
   getVehicles(): NewVehicle[] {
     return this.getRegisteredVehicles();
   }
@@ -56,15 +52,6 @@ export class VehicleService {
       .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
   }
 
-  generateReadingId(): string {
-    const nextId = this.odometerReadings.length + 1;
-    return 'R' + this.pad(nextId);
-  }
-
-  private getAuthHeaders(): HttpHeaders {
-    return new HttpHeaders({ 'Content-Type': 'application/json' });
-  }
-
   addVehicleApi(vehicle: NewVehicle): Observable<any> {
     if (this.commonService.getRole() !== 'admin') {
       return throwError(() => new Error('Forbidden: only admin can add vehicles'));
@@ -76,17 +63,15 @@ export class VehicleService {
       model: vehicle.model,
       year: vehicle.year,
       VIN: vehicle.VIN,
-      LastServiceDate: this.commonService.formatToBackendDate(vehicle.lastServiceDate || ''),
+      lastServiceDate: vehicle.lastServiceDate || null,
     };
 
-    return this.http
-      .post(`${this.API_BASE}/api/vehicles`, payload, { headers: this.getAuthHeaders() })
-      .pipe(
-        catchError((err) => {
-          console.error('Error adding vehicle via API:', err);
-          return throwError(() => err);
-        })
-      );
+    return this.http.post(`${this.API_BASE}/api/vehicles`, payload).pipe(
+      catchError((err) => {
+        console.error('Error adding vehicle via API:', err);
+        return throwError(() => err);
+      })
+    );
   }
 
   fetchVehiclesApi(): Observable<NewVehicle[]> {
@@ -94,7 +79,7 @@ export class VehicleService {
       map((res) =>
         (res || []).map((v) => ({
           type: v.type,
-          make: v.make, 
+          make: v.make,
           model: v.model,
           year: v.year,
           VIN: v.VIN,

@@ -108,9 +108,7 @@ export class ServiceSchedulingComponent implements OnInit, DoCheck {
           model: s.vehicleModel || '',
           year: s.vehicleYear || null,
           VIN: s.vehicleVIN,
-          lastServiceDate: s.lastServiceDate
-            ? this.commonService.parseBackendDateToISO(s.lastServiceDate)
-            : undefined,
+          lastServiceDate: s.lastServiceDate || null,
           serviceType: s.serviceType || '',
           nextServiceMileage: null,
           hasOpenUnpaidService: false,

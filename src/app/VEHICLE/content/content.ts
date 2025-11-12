@@ -122,15 +122,12 @@ addVehicle(form: NgForm): void {
 
   const newVeh = { ...this.newVehicle };
 
-  // ✅ If no date was selected, default to today
   if (!newVeh.lastServiceDate) {
-    newVeh.lastServiceDate = this.formatDate(new Date()); // still in YYYY-MM-DD
+    newVeh.lastServiceDate = this.formatDate(new Date()); 
   }
 
-  // ✅ Convert to backend format (DD-MM-YYYY)
   newVeh.lastServiceDate = this.commonService.formatToBackendDate(newVeh.lastServiceDate);
 
-  // ✅ Validate the converted date
   const parsed = new Date(this.commonService.parseBackendDateToISO(newVeh.lastServiceDate));
   if (isNaN(parsed.getTime())) {
     alert("Please select a valid last service date.");
@@ -177,8 +174,6 @@ addVehicle(form: NgForm): void {
   const modalInstance = bootstrap.Modal.getInstance(this.vehicleModal.nativeElement);
   if (modalInstance) modalInstance.hide();
 }
-
-
 
   submitOdometer(form: NgForm): void {
     if (!form.valid || !this.odometer.vin) return;
